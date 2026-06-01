@@ -217,20 +217,39 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#181818]">
-                  <tr className="hover:bg-[#181818] transition-colors group cursor-pointer">
-                    <td className="p-3 pl-4">
-                      <div className="font-title text-[16px] tracking-[1px] text-white group-hover:text-[#4A85D4]">Direito Penal</div>
-                    </td>
-                    <td className="p-3 text-center font-body font-semibold text-[17px] text-[#4A85D4]">78%</td>
-                    <td className="p-3 text-center"><input type="checkbox" className="w-4 h-4 accent-[#4CAF4C] cursor-pointer" defaultChecked/></td>
-                  </tr>
-                  <tr className="hover:bg-[#181818] transition-colors group cursor-pointer">
-                    <td className="p-3 pl-4">
-                      <div className="font-title text-[16px] tracking-[1px] text-white group-hover:text-[#4A85D4]">Direito Administrativo</div>
-                    </td>
-                    <td className="p-3 text-center font-body font-semibold text-[17px] text-[#FFB800]">45%</td>
-                    <td className="p-3 text-center"><input type="checkbox" className="w-4 h-4 accent-[#4CAF4C] cursor-pointer"/></td>
-                  </tr>
+                  {subjects.map((subject) => {
+                    const totalTopics = subject.topics?.length || 0;
+                    const completedTopics = subject.topics?.filter((t: any) => t.isTheoryDone).length || 0;
+                    const percent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+                    const isCompleted = percent === 100;
+                    const color = subject.colorHex || '#4A85D4';
+
+                    return (
+                      <tr key={subject.id} className="hover:bg-[#181818] transition-colors group cursor-pointer">
+                        <td className="p-3 pl-4">
+                          <div 
+                            className="font-title text-[16px] tracking-[1px] text-white transition-colors"
+                            style={{ '--hover-color': color } as React.CSSProperties}
+                            onMouseEnter={(e) => e.currentTarget.style.color = color}
+                            onMouseLeave={(e) => e.currentTarget.style.color = 'white'}
+                          >
+                            {subject.name}
+                          </div>
+                        </td>
+                        <td className="p-3 text-center font-body font-semibold text-[17px]" style={{ color }}>
+                          {percent}%
+                        </td>
+                        <td className="p-3 text-center">
+                          <input 
+                            type="checkbox" 
+                            className="w-4 h-4 accent-[#4CAF4C] cursor-pointer" 
+                            checked={isCompleted}
+                            readOnly
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -90,3 +90,29 @@ export async function registerStudyMission(formData: FormData) {
     newLevel: currentLevel 
   };
 }
+
+export async function getMissionHistory(month: number, year: number) {
+  const user = await prisma.user.findFirst();
+  if (!user) return [];
+
+  // Data limits for the month
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+  return await prisma.missionLog.findMany({
+    where: {
+      userId: user.id,
+      date: {
+        gte: startDate,
+        lte: endDate,
+      }
+    },
+    include: {
+      subject: true,
+      topic: true,
+    },
+    orderBy: {
+      date: 'asc'
+    }
+  });
+}
