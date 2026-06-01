@@ -19,6 +19,7 @@ import { useState } from "react";
 import { CycleModal } from "@/components/CycleModal";
 import { StudyModal } from "@/components/StudyModal";
 import { EditalCompleto } from "@/components/EditalCompleto";
+import { OnboardingModal } from "@/components/OnboardingModal";
 
 export default function DashboardClient({ initialUser, subjects }: { initialUser: any, subjects: any[] }) {
   const getRank = (hours: number) => {
@@ -48,9 +49,11 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   const currentXp = initialUser?.xp || 0;
   const xpNeeded = level * 100;
   const xpPercentage = Math.min(100, Math.floor((currentXp / xpNeeded) * 100));
+  const showOnboarding = !initialUser?.policeClass;
 
   return (
     <main className="flex-1 bg-system-bg relative h-full overflow-y-auto">
+      {showOnboarding && <OnboardingModal initialName={initialUser?.name || ""} />}
       <Header onOpenCycleModal={() => setIsCycleModalOpen(true)} />
       
       <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-4">

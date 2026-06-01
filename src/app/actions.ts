@@ -116,3 +116,30 @@ export async function getMissionHistory(month: number, year: number) {
     }
   });
 }
+
+export async function updateUserProfile(data: {
+  name: string;
+  age: number;
+  gender: string;
+  policeClass: string;
+  isPCD: boolean;
+  race: string;
+}) {
+  const user = await prisma.user.findFirst();
+  if (!user) throw new Error("Usuário não encontrado");
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      name: data.name,
+      age: data.age,
+      gender: data.gender,
+      policeClass: data.policeClass,
+      isPCD: data.isPCD,
+      race: data.race,
+    }
+  });
+
+  revalidatePath("/");
+  return { success: true };
+}

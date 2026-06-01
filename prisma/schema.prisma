@@ -20,6 +20,13 @@ model User {
   coins         Int      @default(0)
   classRole     String   @default("Recruta")
   
+  // Onboarding (Character Creation)
+  gender        String?  // Masculino, Feminino
+  age           Int?
+  policeClass   String?  // PF, PRF, PM, PC, PP, GCM
+  isPCD         Boolean  @default(false)
+  race          String?  // Branco, Preto, Pardo, Indígena, Amarelo
+  
   // Atributos do Radar
   inteligencia  Int      @default(0) // Ganho via Acertos TEC/QC
   forca         Int      @default(0) // Ganho via TAF
