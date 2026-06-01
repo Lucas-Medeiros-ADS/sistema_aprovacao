@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-system-bg: #0A0A0A;
+  --color-system-card: #111111;
+  --color-system-card-hover: #181818;
+  --color-system-border: #2A2A2A;
+  --color-system-primary: #00E5FF;
+  --color-system-xp: #B026FF;
+  --color-system-danger: #FF1744;
+  --color-system-success: #00E676;
+  --color-system-text: #F2F2F2;
+  --color-system-muted: #A6A6A6;
+  
+  --color-navy: #050A1A;
+  --color-navy-dark: #0D1B3E;
+  --color-blue-accent: #2D5FAA;
+  --color-green-accent: #1C5C1C;
+  --color-gold: #FFB800;
+  
+  --font-title: var(--font-title);
+  --font-mono: var(--font-mono);
+  --font-body: var(--font-body);
+}
+
+body {
+  background-color: var(--color-system-bg);
+  color: var(--color-system-text);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+}
+
+/* Scrollbar Customizada */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom Utilities for Neon/Cyberpunk Feel */
+@layer utilities {
+  .glow-hover:hover {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+    border-color: rgba(0, 229, 255, 0.5);
+  }
+  
+  .glow-text {
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  }
+}
+
+/* Scrollbar Personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-system-bg); 
+}
+::-webkit-scrollbar-thumb {
+  background: #333; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-system-primary); 
+}

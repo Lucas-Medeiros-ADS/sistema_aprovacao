@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// SISTEMA DE STATUS DO JOGADOR (CAÇADOR)
+// -----------------------------------------------------------------------------
+model User {
+  id            String   @id @default(uuid())
+  name          String   @default("Caçador")
+  email         String?  @unique
+  
+  // Status Solo Leveling
+  level         Int      @default(1)
+  xp            Int      @default(0)
+  coins         Int      @default(0)
+  classRole     String   @default("Recruta")
+  
+  // Atributos do Radar
+  inteligencia  Int      @default(0) // Ganho via Acertos TEC/QC
+  forca         Int      @default(0) // Ganho via TAF
+  disciplina    Int      @default(0) // Ganho via constância (Dias Vivos)
+  espirito      Int      @default(0) // Ganho via Tracker Espiritual
+  
+  // Tracker de Constância
+  streakDays    Int      @default(0) // Dias Vivos
+  spiritualType String   @default("Católico") // "Católico" (Missa) ou "Evangélico" (Culto)
+  
+  // Relações
+  missionLogs   MissionLog[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// SISTEMA DO EDITAL (Manual de Sobrevivência)
+// -----------------------------------------------------------------------------
+model Subject {
+  id          String   @id @default(uuid())
+  name        String
+  colorHex    String   @default("#00E5FF") // Azul Gelo (padrão)
+  importance  Int      @default(1) // Peso na prova
+  
+  topics      Topic[]
+  missionLogs MissionLog[]
+}
+
+model Topic {
+  id          String   @id @default(uuid())
+  subjectId   String
+  title       String
+  order       Int      @default(0)
+  
+  isTheoryDone Boolean @default(false)
+  masteryLevel Int     @default(1) // 1 (Iniciante) a 3 (Avançado)
+  
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  missionLogs MissionLog[]
+}
+
+// -----------------------------------------------------------------------------
+// SISTEMA DE COMBATE (Registro de Missões Diárias)
+// -----------------------------------------------------------------------------
+model MissionLog {
+  id          String   @id @default(uuid())
+  userId      String
+  
+  // TIPO DA MISSÃO: "ESTUDO", "TAF" ou "ESPIRITO"
+  missionType String
+  
+  // --------------------------------------------------
+  // A. Inteligência (Estudo TEC/QC)
+  // --------------------------------------------------
+  subjectId   String?
+  topicId     String?
+  category    String?  // "Teoria", "Revisão", "Questões"
+  durationMin Int?     // Tempo líquido
+  questionsDone Int?   @default(0)
+  questionsRight Int?  @default(0)
+  
+  // --------------------------------------------------
+  // B. Força (TAF)
+  // --------------------------------------------------
+  runDistanceMeters Int?
+  swimTimeSeconds   Int?
+  pullUpsCount      Int?
+  
+  // --------------------------------------------------
+  // C. Espírito (Missa/Culto)
+  // --------------------------------------------------
+  spiritualDone     Boolean @default(false)
+  
+  date        DateTime @default(now())
+  notes       String?  @db.Text
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject     Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  topic       Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+}
