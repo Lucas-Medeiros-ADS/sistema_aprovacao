@@ -15,6 +15,7 @@ model User {
   password      String
   name          String   @default("Caçador")
   email         String?  @unique
+  whatsapp      String?  // Número de telefone para notificações
   
   // Status Solo Leveling
   level         Int      @default(1)

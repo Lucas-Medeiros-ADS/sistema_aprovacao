@@ -167,11 +167,14 @@ export async function login(formData: FormData) {
   return { success: true };
 }
 
+
+
 export async function registerUser(formData: FormData) {
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
+  const whatsapp = formData.get("whatsapp") as string | null;
   
-  if (!username || !password) return { success: false, message: "Preencha todos os campos." };
+  if (!username || !password) return { success: false, message: "Preencha todos os campos obrigatórios." };
   
   const existing = await prisma.user.findUnique({ where: { username } });
   if (existing) return { success: false, message: "Nome de usuário já existe." };
@@ -181,7 +184,8 @@ export async function registerUser(formData: FormData) {
     data: {
       username,
       password: hashedPassword,
-      name: username
+      name: username,
+      whatsapp: whatsapp || null,
     }
   });
   

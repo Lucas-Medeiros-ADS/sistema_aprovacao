@@ -99,6 +99,23 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {!isLogin && (
+              <div className="space-y-1 md:space-y-2 animate-fade-in mt-4">
+                <label className="font-title tracking-[1px] text-[#E0E0E0] text-[14px]">WHATSAPP (OPCIONAL)</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="whatsapp"
+                    placeholder="(00) 00000-0000"
+                    className="w-full bg-[#1A1A1A] border border-[#333] text-white p-3 md:p-4 rounded-md focus:outline-none focus:border-[#B026FF] focus:shadow-[0_0_15px_rgba(176,38,255,0.3)] transition-all"
+                  />
+                </div>
+                <p className="text-[#888] text-xs font-body">
+                  Receba convocações do Sistema e alertas de XP direto no seu WhatsApp!
+                </p>
+              </div>
+            )}
+
             <button 
               type="submit"
               disabled={isLoading}
