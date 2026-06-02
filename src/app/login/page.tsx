@@ -39,25 +39,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-system-bg flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-system-bg flex items-center justify-center p-4 md:p-8 relative overflow-y-auto overflow-x-hidden custom-scrollbar">
       {/* Background decorations */}
-      <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-[#B026FF]/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-100px] right-[-100px] w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-[#B026FF]/10 rounded-full blur-[100px] pointer-events-none fixed" />
+      <div className="absolute bottom-[-100px] right-[-100px] w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-[100px] pointer-events-none fixed" />
 
-      <div className="w-full max-w-md z-10 animate-fade-in">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Shield className="w-16 h-16 text-[#B026FF] glow-text" />
+      <div className="w-full max-w-md z-10 animate-fade-in my-auto">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-3">
+            <Shield className="w-12 h-12 md:w-16 md:h-16 text-[#B026FF] glow-text" />
           </div>
-          <h1 className="text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
+          <h1 className="text-3xl md:text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
             Operação Aprovação
           </h1>
-          <p className="font-body font-semibold text-[#E0E0E0] text-[16px] mt-2 tracking-[1px] uppercase">
+          <p className="font-body font-semibold text-[#E0E0E0] text-[14px] md:text-[16px] mt-1 md:mt-2 tracking-[1px] uppercase">
             Sistema de Gerenciamento Tático
           </p>
         </div>
 
-        <div className="bg-[#111] border border-[#2A2A2A] rounded-lg p-6 md:p-8 shadow-[0_0_30px_rgba(176,38,255,0.1)]">
+        <div className="bg-[#111] border border-[#2A2A2A] rounded-lg p-6 shadow-[0_0_30px_rgba(176,38,255,0.1)]">
           <h2 className="font-title text-[24px] tracking-[2px] text-white uppercase mb-6 border-b border-[#2A2A2A] pb-3">
             {isLogin ? "Acessar Sistema" : "Criar Personagem"}
           </h2>
@@ -68,8 +68,8 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1 md:space-y-2">
               <label className="font-title tracking-[1px] text-[#E0E0E0] text-[14px]">NOME DE USUÁRIO</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
@@ -109,7 +109,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center border-t border-[#2A2A2A] pt-4">
+          <div className="mt-5 text-center border-t border-[#2A2A2A] pt-4">
             <button 
               onClick={() => {
                 setIsLogin(!isLogin);
