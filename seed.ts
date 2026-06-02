@@ -20,6 +20,8 @@ async function main() {
   // 1. Criar o Usuário Base
   const user = await prisma.user.create({
     data: {
+      username: 'lucas',
+      password: 'password123',
       name: 'Lucas', // Caçador
       email: 'lucas@solo.com',
       level: 1,
