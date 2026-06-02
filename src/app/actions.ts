@@ -129,6 +129,7 @@ export async function updateUserProfile(data: {
   policeClass: string;
   isPCD: boolean;
   race: string;
+  whatsapp?: string;
 }) {
   const user = await getUserProfile();
   if (!user) throw new Error("Usuário não encontrado");
@@ -142,6 +143,7 @@ export async function updateUserProfile(data: {
       policeClass: data.policeClass,
       isPCD: data.isPCD,
       race: data.race,
+      whatsapp: data.whatsapp || user.whatsapp, // Keep existing if not provided
     }
   });
 

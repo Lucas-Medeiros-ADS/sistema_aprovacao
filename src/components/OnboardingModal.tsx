@@ -64,6 +64,7 @@ export function OnboardingModal({ initialName }: OnboardingModalProps) {
   const [race, setRace] = useState("");
   const [isPCD, setIsPCD] = useState(false);
   const [policeClass, setPoliceClass] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
 
   const isStep1Valid = name.trim() !== "" && age !== "" && gender !== "" && race !== "";
   const isStep2Valid = policeClass !== "";
@@ -79,7 +80,8 @@ export function OnboardingModal({ initialName }: OnboardingModalProps) {
         gender,
         race,
         isPCD,
-        policeClass
+        policeClass,
+        whatsapp
       });
       // A página vai recarregar automaticamente pelo revalidatePath
       window.location.reload();
@@ -172,6 +174,19 @@ export function OnboardingModal({ initialName }: OnboardingModalProps) {
                     <option value="Indígena">Indígena</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="font-title tracking-[1px] text-[#E0E0E0] text-[12px] uppercase">
+                  WhatsApp (Opcional - Para Notificações)
+                </label>
+                <input
+                  type="text"
+                  placeholder="(00) 00000-0000"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  className="w-full bg-[#1A1A1A] border border-[#333] text-white p-3 rounded-md focus:outline-none focus:border-[#B026FF] focus:shadow-[0_0_15px_rgba(176,38,255,0.3)] transition-all"
+                />
               </div>
 
               <div className="bg-[#181818] border border-[#2A2A2A] rounded p-4 flex items-start gap-3 mt-4">
