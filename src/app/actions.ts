@@ -2,9 +2,14 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import bcrypt from "bcryptjs";
 
 export async function getUserProfile() {
-  const user = await prisma.user.findFirst();
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("hunter_id")?.value;
+  if (!userId) return null;
+  const user = await prisma.user.findUnique({ where: { id: userId } });
   return user;
 }
 
@@ -29,7 +34,7 @@ export async function registerStudyMission(formData: FormData) {
 
   const durationMin = (hours * 60) + minutes;
 
-  const user = await prisma.user.findFirst();
+  const user = await getUserProfile();
   if (!user) throw new Error("Usuário não encontrado!");
 
   // 1. Criar o Log da Missão
@@ -92,7 +97,7 @@ export async function registerStudyMission(formData: FormData) {
 }
 
 export async function getMissionHistory(month: number, year: number) {
-  const user = await prisma.user.findFirst();
+  const user = await getUserProfile();
   if (!user) return [];
 
   // Data limits for the month
@@ -125,7 +130,7 @@ export async function updateUserProfile(data: {
   isPCD: boolean;
   race: string;
 }) {
-  const user = await prisma.user.findFirst();
+  const user = await getUserProfile();
   if (!user) throw new Error("Usuário não encontrado");
 
   await prisma.user.update({
@@ -142,4 +147,52 @@ export async function updateUserProfile(data: {
 
   revalidatePath("/");
   return { success: true };
+}
+
+export async function login(formData: FormData) {
+  const username = formData.get("username") as string;
+  const password = formData.get("password") as string;
+  
+  if (!username || !password) return { success: false, message: "Preencha todos os campos." };
+  
+  const user = await prisma.user.findUnique({ where: { username } });
+  if (!user) return { success: false, message: "Usuário não encontrado." };
+  
+  const isValid = await bcrypt.compare(password, user.password);
+  if (!isValid) return { success: false, message: "Senha incorreta." };
+  
+  const cookieStore = await cookies();
+  cookieStore.set("hunter_id", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", path: "/" });
+  
+  return { success: true };
+}
+
+export async function registerUser(formData: FormData) {
+  const username = formData.get("username") as string;
+  const password = formData.get("password") as string;
+  
+  if (!username || !password) return { success: false, message: "Preencha todos os campos." };
+  
+  const existing = await prisma.user.findUnique({ where: { username } });
+  if (existing) return { success: false, message: "Nome de usuário já existe." };
+  
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: {
+      username,
+      password: hashedPassword,
+      name: username
+    }
+  });
+  
+  const cookieStore = await cookies();
+  cookieStore.set("hunter_id", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", path: "/" });
+  
+  return { success: true };
+}
+
+export async function logout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("hunter_id");
+  revalidatePath("/");
 }

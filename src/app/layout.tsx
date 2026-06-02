@@ -38,7 +38,7 @@ export default async function RootLayout({
       className={`${bebasNeue.variable} ${shareTechMono.variable} ${oswald.variable} dark antialiased`}
     >
       <body className="min-h-screen bg-system-bg text-system-text flex">
-        <Sidebar user={user} />
+        {user && <Sidebar user={user} />}
         <div className="flex-1 flex flex-col h-screen overflow-y-auto">
           {children}
         </div>

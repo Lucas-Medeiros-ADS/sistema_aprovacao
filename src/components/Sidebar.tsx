@@ -1,10 +1,11 @@
 "use client";
 
-import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History } from "lucide-react";
+import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { MarchaModal } from "./MarchaModal";
+import { logout } from "@/app/actions";
 
 export function Sidebar({ user }: { user?: any }) {
   const pathname = usePathname();
@@ -93,10 +94,17 @@ export function Sidebar({ user }: { user?: any }) {
           <div className="w-10 h-10 rounded bg-[#B026FF] flex items-center justify-center font-bold text-white shadow-[0_0_10px_rgba(176,38,255,0.4)] flex-shrink-0 text-xl">
             {initial}
           </div>
-          <div className="hidden md:block">
-            <p className="text-sm font-bold font-body text-white tracking-wide truncate max-w-[120px] uppercase">{userName}</p>
+          <div className="hidden md:block flex-1">
+            <p className="text-sm font-bold font-body text-white tracking-wide truncate max-w-[100px] uppercase">{userName}</p>
             <p className="text-xs font-body font-semibold text-[#E0E0E0]">Nível {userLevel}</p>
           </div>
+          <button 
+            onClick={async () => await logout()} 
+            className="text-gray-500 hover:text-red-500 transition-colors p-1"
+            title="Sair (Logout)"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
       
