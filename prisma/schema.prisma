@@ -10,11 +10,9 @@ datasource db {
 // SISTEMA DE STATUS DO JOGADOR (CAÇADOR)
 // -----------------------------------------------------------------------------
 model User {
-  id            String   @id @default(uuid())
-  username      String   @unique
-  password      String
+  id            String   @id // Matches Supabase Auth UUID
+  email         String   @unique
   name          String   @default("Caçador")
-  email         String?  @unique
   whatsapp      String?  // Número de telefone para notificações
   
   // Status Solo Leveling

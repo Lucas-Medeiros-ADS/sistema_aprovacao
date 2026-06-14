@@ -2,15 +2,14 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import bcrypt from "bcryptjs";
+import { createClient } from "@/lib/supabase/server";
 
 export async function getUserProfile() {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("hunter_id")?.value;
-  if (!userId) return null;
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  return user;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  return dbUser;
 }
 
 export async function getSubjects() {
@@ -165,53 +164,75 @@ export async function updateUserName(name: string) {
 }
 
 export async function login(formData: FormData) {
-  const username = formData.get("username") as string;
+  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   
-  if (!username || !password) return { success: false, message: "Preencha todos os campos." };
+  if (!email || !password) return { success: false, message: "Preencha todos os campos." };
   
-  const user = await prisma.user.findUnique({ where: { username } });
-  if (!user) return { success: false, message: "Usuário não encontrado." };
-  
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) return { success: false, message: "Senha incorreta." };
-  
-  const cookieStore = await cookies();
-  cookieStore.set("hunter_id", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", path: "/" });
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return { success: false, message: "Credenciais inválidas ou e-mail incorreto." };
+  }
   
   return { success: true };
 }
 
-
-
 export async function registerUser(formData: FormData) {
-  const username = formData.get("username") as string;
+  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const name = formData.get("name") as string;
   const whatsapp = formData.get("whatsapp") as string | null;
   
-  if (!username || !password) return { success: false, message: "Preencha todos os campos obrigatórios." };
+  if (!email || !password || !name) return { success: false, message: "Preencha todos os campos obrigatórios." };
   
-  const existing = await prisma.user.findUnique({ where: { username } });
-  if (existing) return { success: false, message: "Nome de usuário já existe." };
-  
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
-    data: {
-      username,
-      password: hashedPassword,
-      name: username,
-      whatsapp: whatsapp || null,
-    }
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
   });
-  
-  const cookieStore = await cookies();
-  cookieStore.set("hunter_id", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", path: "/" });
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  if (data.user) {
+    const existing = await prisma.user.findUnique({ where: { id: data.user.id } });
+    if (!existing) {
+      await prisma.user.create({
+        data: {
+          id: data.user.id,
+          email,
+          name,
+          whatsapp: whatsapp || null,
+        }
+      });
+    }
+  }
   
   return { success: true };
 }
 
 export async function logout() {
-  const cookieStore = await cookies();
-  cookieStore.delete("hunter_id");
+  const supabase = await createClient();
+  await supabase.auth.signOut();
   revalidatePath("/");
+}
+
+export async function resetPasswordForEmail(formData: FormData) {
+  const email = formData.get("email") as string;
+  if (!email) return { success: false, message: "E-mail é obrigatório." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
+  });
+
+  if (error) return { success: false, message: error.message };
+  
+  return { success: true, message: "E-mail de recuperação enviado!" };
 }
