@@ -5,11 +5,16 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getUserProfile() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  return dbUser;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    return dbUser;
+  } catch (error) {
+    console.error("getUserProfile Error:", error);
+    return null;
+  }
 }
 
 export async function getSubjects() {
