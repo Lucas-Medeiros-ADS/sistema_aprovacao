@@ -151,6 +151,19 @@ export async function updateUserProfile(data: {
   return { success: true };
 }
 
+export async function updateUserName(name: string) {
+  const user = await getUserProfile();
+  if (!user) throw new Error("Usuário não encontrado");
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { name }
+  });
+
+  revalidatePath("/");
+  return { success: true };
+}
+
 export async function login(formData: FormData) {
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;

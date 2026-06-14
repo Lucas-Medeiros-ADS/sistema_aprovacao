@@ -20,6 +20,7 @@ import { CycleModal } from "@/components/CycleModal";
 import { StudyModal } from "@/components/StudyModal";
 import { EditalCompleto } from "@/components/EditalCompleto";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import { updateUserName } from "./actions";
 
 export default function DashboardClient({ initialUser, subjects }: { initialUser: any, subjects: any[] }) {
   const getRank = (hours: number) => {
@@ -44,6 +45,17 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   const [playerName, setPlayerName] = useState(initialUser?.name || "Lucas");
   const [isEditingName, setIsEditingName] = useState(false);
   const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL'>('CICLO');
+
+  const handleSaveName = async () => {
+    setIsEditingName(false);
+    if (playerName !== initialUser?.name) {
+      try {
+        await updateUserName(playerName);
+      } catch (error) {
+        console.error("Failed to update name:", error);
+      }
+    }
+  };
 
   const level = initialUser?.level || 1;
   const currentXp = initialUser?.xp || 0;
@@ -73,8 +85,8 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
                       type="text" 
                       value={playerName}
                       onChange={(e) => setPlayerName(e.target.value)}
-                      onBlur={() => setIsEditingName(false)}
-                      onKeyDown={(e) => e.key === 'Enter' && setIsEditingName(false)}
+                      onBlur={handleSaveName}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
                       autoFocus
                       className="bg-[#181818] border border-[#2A2A2A] rounded px-3 py-1 text-3xl font-title tracking-[2px] text-white focus:outline-none focus:border-[#B026FF] uppercase w-full max-w-[300px]"
                     />
