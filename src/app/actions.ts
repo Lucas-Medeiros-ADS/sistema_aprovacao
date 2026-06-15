@@ -169,22 +169,26 @@ export async function updateUserName(name: string) {
 }
 
 export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  
-  if (!email || !password) return { success: false, message: "Preencha todos os campos." };
-  
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    
+    if (!email || !password) return { success: false, message: "Preencha todos os campos." };
+    
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    return { success: false, message: "Credenciais inválidas ou e-mail incorreto." };
+    if (error) {
+      return { success: false, message: "Credenciais inválidas ou e-mail incorreto." };
+    }
+    
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, message: err?.message || String(err) };
   }
-  
-  return { success: true };
 }
 
 export async function registerUser(formData: FormData) {
