@@ -162,7 +162,7 @@ export async function updateUserName(name: string) {
 
 export async function login(formData: FormData) {
   // Login simulado - apenas sucesso na versão local sem Supabase
-  return { success: true };
+  return { success: true, message: "" };
 }
 
 export async function registerUser(formData: FormData) {
