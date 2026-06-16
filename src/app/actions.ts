@@ -203,16 +203,27 @@ export async function registerUser(formData: FormData) {
   }
 
   if (data.user) {
-    const existing = await prisma.user.findUnique({ where: { id: data.user.id } });
-    if (!existing) {
-      await prisma.user.create({
-        data: {
-          id: data.user.id,
-          email,
-          name,
-          whatsapp: whatsapp || null,
-        }
-      });
+    try {
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (!existing) {
+        await prisma.user.create({
+          data: {
+            id: data.user.id,
+            email,
+            name,
+            whatsapp: whatsapp || null,
+          }
+        });
+      } else if (existing.id !== data.user.id) {
+        // Se o e-mail existe no Prisma com outro ID, atualiza para o novo ID do Supabase
+        await prisma.user.update({
+          where: { email },
+          data: { id: data.user.id, name, whatsapp: whatsapp || null }
+        });
+      }
+    } catch (e: any) {
+      console.error("Prisma error:", e);
+      return { success: false, message: "Erro ao salvar perfil no banco de dados." };
     }
   }
   
