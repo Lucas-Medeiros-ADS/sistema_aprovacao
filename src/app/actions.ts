@@ -2,13 +2,10 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { randomUUID } from "crypto";
 
 export async function getUserProfile() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  const dbUser = await prisma.user.findFirst();
   return dbUser;
 }
 
@@ -164,75 +161,36 @@ export async function updateUserName(name: string) {
 }
 
 export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  
-  if (!email || !password) return { success: false, message: "Preencha todos os campos." };
-  
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { success: false, message: "Credenciais inválidas ou e-mail incorreto." };
-  }
-  
+  // Login simulado - apenas sucesso na versão local sem Supabase
   return { success: true };
 }
 
 export async function registerUser(formData: FormData) {
   const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
   const name = formData.get("name") as string;
   const whatsapp = formData.get("whatsapp") as string | null;
   
-  if (!email || !password || !name) return { success: false, message: "Preencha todos os campos obrigatórios." };
+  if (!email || !name) return { success: false, message: "Preencha todos os campos obrigatórios." };
   
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { success: false, message: error.message };
-  }
-
-  if (data.user) {
-    const existing = await prisma.user.findUnique({ where: { id: data.user.id } });
-    if (!existing) {
-      await prisma.user.create({
-        data: {
-          id: data.user.id,
-          email,
-          name,
-          whatsapp: whatsapp || null,
-        }
-      });
-    }
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (!existing) {
+    await prisma.user.create({
+      data: {
+        id: randomUUID(),
+        email,
+        name,
+        whatsapp: whatsapp || null,
+      }
+    });
   }
   
   return { success: true };
 }
 
 export async function logout() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
   revalidatePath("/");
 }
 
 export async function resetPasswordForEmail(formData: FormData) {
-  const email = formData.get("email") as string;
-  if (!email) return { success: false, message: "E-mail é obrigatório." };
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
-  });
-
-  if (error) return { success: false, message: error.message };
-  
-  return { success: true, message: "E-mail de recuperação enviado!" };
+  return { success: true, message: "Função não disponível localmente." };
 }
