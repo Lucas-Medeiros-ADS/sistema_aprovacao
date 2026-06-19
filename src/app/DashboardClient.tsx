@@ -22,6 +22,8 @@ import { EditalCompleto } from "@/components/EditalCompleto";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { updateUserName } from "./actions";
 
+import { WelcomeAnimation } from "@/components/WelcomeAnimation";
+
 export default function DashboardClient({ initialUser, subjects }: { initialUser: any, subjects: any[] }) {
   const getRank = (hours: number) => {
     if (hours < 6) return "Recruta";
@@ -65,6 +67,7 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
 
   return (
     <main className="flex-1 bg-system-bg relative h-full overflow-y-auto">
+      <WelcomeAnimation userName={playerName} />
       {showOnboarding && <OnboardingModal initialName={initialUser?.name || ""} />}
       <Header onOpenCycleModal={() => setIsCycleModalOpen(true)} />
       
