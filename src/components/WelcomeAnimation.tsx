@@ -73,7 +73,7 @@ export function WelcomeAnimation({ userName }: { userName?: string }) {
           <div className="animate-bounce-in">
             <Shield className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 text-[#B026FF] drop-shadow-[0_0_20px_rgba(176,38,255,0.8)]" />
             <h2 className="font-title text-4xl md:text-6xl text-white tracking-[5px] uppercase font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#B026FF] drop-shadow-[0_0_25px_rgba(0,229,255,0.5)]">
-              Bem-vindo, Caçador
+              Bem-vindo, Futuro Policial
             </h2>
             {userName && (
               <p className="font-mono text-xl md:text-2xl mt-4 text-[#E0E0E0] tracking-[5px] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">

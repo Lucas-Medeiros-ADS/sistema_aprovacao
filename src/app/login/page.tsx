@@ -172,7 +172,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full bg-[#181818] border border-[#2A2A2A] rounded p-3 pl-10 text-white font-body text-[16px] focus:border-[#B026FF] focus:outline-none focus:ring-1 focus:ring-[#B026FF] transition-colors"
-                      placeholder="Seu e-mail de caçador"
+                      placeholder="Seu e-mail principal"
                       required
                     />
                   </div>
@@ -232,7 +232,7 @@ export default function LoginPage() {
                 >
                   {isForgotPassword 
                     ? "Voltar para o login"
-                    : "Não tem um personagem? Crie aqui."}
+                    : "Primeiro acesso? Cadastre-se aqui."}
                 </button>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function LoginPage() {
                   Criação de Personagem
                 </h1>
                 <p className="font-body font-semibold text-[#E0E0E0] text-[15px] md:text-[17px] mt-2 tracking-[1px] uppercase">
-                  {step === 1 ? "Identificação Básica do Caçador" : "Escolha sua Especialidade (Classe)"}
+                  {step === 1 ? "Identificação Básica do Futuro Policial" : "Escolha sua Especialidade (Classe)"}
                 </p>
               </div>
 
@@ -279,7 +279,7 @@ export default function LoginPage() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           className="w-full bg-[#181818] border border-[#2A2A2A] rounded p-3 pl-10 text-white font-body font-semibold text-[16px] focus:border-[#B026FF] focus:outline-none focus:ring-1 focus:ring-[#B026FF] transition-colors"
-                          placeholder="Seu e-mail de caçador"
+                          placeholder="Seu e-mail principal"
                         />
                       </div>
                     </div>
@@ -394,7 +394,7 @@ export default function LoginPage() {
                       }}
                       className="font-body text-[#A0A0A0] hover:text-white transition-colors text-[14px]"
                     >
-                      Já possui um personagem? Acesse aqui.
+                      Já é aluno? Acesse aqui.
                     </button>
                     
                     <button 
