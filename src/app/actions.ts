@@ -189,6 +189,11 @@ export async function registerUser(formData: FormData) {
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
   const whatsapp = formData.get("whatsapp") as string | null;
+  const age = Number(formData.get("age"));
+  const gender = formData.get("gender") as string;
+  const race = formData.get("race") as string;
+  const isPCD = formData.get("isPCD") === "true";
+  const policeClass = formData.get("policeClass") as string;
   
   if (!email || !password || !name) return { success: false, message: "Preencha todos os campos obrigatórios." };
   
@@ -204,21 +209,25 @@ export async function registerUser(formData: FormData) {
 
   if (data.user) {
     try {
+      const userData = {
+        id: data.user.id,
+        email,
+        name,
+        whatsapp: whatsapp || null,
+        age: age || null,
+        gender: gender || null,
+        race: race || null,
+        isPCD: isPCD || false,
+        policeClass: policeClass || null,
+      };
+
       const existing = await prisma.user.findUnique({ where: { email } });
       if (!existing) {
-        await prisma.user.create({
-          data: {
-            id: data.user.id,
-            email,
-            name,
-            whatsapp: whatsapp || null,
-          }
-        });
+        await prisma.user.create({ data: userData as any });
       } else if (existing.id !== data.user.id) {
-        // Se o e-mail existe no Prisma com outro ID, atualiza para o novo ID do Supabase
         await prisma.user.update({
           where: { email },
-          data: { id: data.user.id, name, whatsapp: whatsapp || null }
+          data: userData as any
         });
       }
     } catch (e: any) {
