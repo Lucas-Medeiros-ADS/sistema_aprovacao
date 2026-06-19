@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History, LogOut } from "lucide-react";
+import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History, LogOut, Activity } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -68,6 +68,10 @@ export function Sidebar({ user }: { user?: any }) {
           <Link href="/historico" className={getLinkClasses("/historico")} title="Histórico">
             <History className={getIconClasses("/historico")} />
             <span className="font-body font-semibold hidden md:block">HISTÓRICO</span>
+          </Link>
+          <Link href="/relatorio" className={getLinkClasses("/relatorio")} title="Relatório">
+            <Activity className={getIconClasses("/relatorio")} />
+            <span className="font-body font-semibold hidden md:block">RELATÓRIO</span>
           </Link>
           <Link href="/guilda" className={getLinkClasses("/guilda")} title="Guilda">
             <Shield className={getIconClasses("/guilda")} />

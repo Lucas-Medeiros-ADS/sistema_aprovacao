@@ -249,3 +249,97 @@ export async function resetPasswordForEmail(formData: FormData) {
   
   return { success: true, message: "E-mail de recuperação enviado!" };
 }
+
+export async function getDailyProgress() {
+  const user = await getUserProfile();
+  if (!user) return null;
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const todayMissions = await prisma.missionLog.findMany({
+    where: {
+      userId: user.id,
+      date: { gte: startOfDay, lte: endOfDay }
+    }
+  });
+
+  const durationMin = todayMissions.reduce((acc, m) => acc + (m.durationMin || 0), 0);
+  const questionsDone = todayMissions.reduce((acc, m) => acc + (m.questionsDone || 0), 0);
+  const questionsRight = todayMissions.reduce((acc, m) => acc + (m.questionsRight || 0), 0);
+  const tafDone = todayMissions.some(m => m.missionType === "TAF");
+
+  return { durationMin, questionsDone, questionsRight, tafDone };
+}
+
+export async function getMonthlyStats() {
+  const user = await getUserProfile();
+  if (!user) return null;
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+  const monthlyMissions = await prisma.missionLog.findMany({
+    where: {
+      userId: user.id,
+      date: { gte: startOfMonth, lte: endOfMonth }
+    }
+  });
+
+  let totalQuestions = 0;
+  let totalRight = 0;
+  let totalDurationMin = 0;
+
+  const historyMap: Record<string, { dateStr: string, questionsDone: number, questionsRight: number }> = {};
+  const tafDistances: any[] = [];
+
+  for (const m of monthlyMissions) {
+    const dStr = m.date.toISOString().split('T')[0];
+    const shortDate = `${m.date.getDate()}/${m.date.getMonth() + 1}`;
+    
+    if (!historyMap[dStr]) {
+      historyMap[dStr] = { dateStr: shortDate, questionsDone: 0, questionsRight: 0 };
+    }
+
+    if (m.durationMin) totalDurationMin += m.durationMin;
+    if (m.questionsDone) {
+      totalQuestions += m.questionsDone;
+      historyMap[dStr].questionsDone += m.questionsDone;
+    }
+    if (m.questionsRight) {
+      totalRight += m.questionsRight;
+      historyMap[dStr].questionsRight += m.questionsRight;
+    }
+    if (m.missionType === "TAF" && m.runDistanceMeters) {
+      tafDistances.push({ name: shortDate, distancia: m.runDistanceMeters });
+    }
+  }
+
+  const accuracyHistory = Object.values(historyMap).map(h => {
+    return {
+      name: h.dateStr,
+      acertos: h.questionsDone > 0 ? Math.round((h.questionsRight / h.questionsDone) * 100) : 0
+    };
+  });
+
+  const radarData = [
+    { subject: 'Inteligência', A: user.inteligencia, fullMark: Math.max(100, user.inteligencia + 20) },
+    { subject: 'Força', A: user.forca, fullMark: Math.max(100, user.forca + 20) },
+    { subject: 'Disciplina', A: user.disciplina, fullMark: Math.max(100, user.disciplina + 20) },
+    { subject: 'Espírito', A: user.espirito, fullMark: Math.max(100, user.espirito + 20) },
+  ];
+
+  return {
+    user,
+    radarData,
+    accuracyHistory,
+    tafDistances,
+    totalQuestions,
+    totalRight,
+    totalDurationMin
+  };
+}

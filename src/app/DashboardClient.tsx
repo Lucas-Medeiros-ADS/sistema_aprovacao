@@ -269,7 +269,7 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
               </table>
             </div>
           ) : (
-            <EditalCompleto />
+            <EditalCompleto subjects={subjects} />
           )}
         </div>
 
