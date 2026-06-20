@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ShieldAlert, Crosshair, Map, Search, Lock, Shield, User, Activity, AlertTriangle } from "lucide-react";
-import { updateUserProfile } from "@/app/actions";
+import { updateUserProfile, logout } from "@/app/actions";
 
 interface OnboardingModalProps {
   initialName: string;
@@ -103,14 +103,21 @@ export function OnboardingModal({ initialName }: OnboardingModalProps) {
           />
         </div>
 
-        <div className="p-8 md:p-10 flex flex-col items-center">
+        <div className="p-8 md:p-10 flex flex-col items-center relative">
           
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
+          <button 
+            onClick={() => logout()}
+            className="absolute top-4 right-4 md:top-8 md:right-8 text-gray-500 hover:text-red-500 font-title text-[12px] md:text-sm tracking-widest uppercase transition-colors"
+          >
+            Sair / Trocar Conta
+          </button>
+
+          <div className="text-center mb-8 mt-6 md:mt-0">
+            <h1 className="text-3xl md:text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
               Criação de Personagem
             </h1>
-            <p className="font-body font-semibold text-[#E0E0E0] text-[17px] mt-2 tracking-[1px] uppercase">
-              {step === 1 ? "Identificação Básica do Caçador" : "Escolha sua Especialidade (Classe)"}
+            <p className="font-body font-semibold text-[#E0E0E0] text-[15px] md:text-[17px] mt-2 tracking-[1px] uppercase">
+              {step === 1 ? "Identificação Básica do Futuro Policial" : "Escolha sua Especialidade (Classe)"}
             </p>
           </div>
 
