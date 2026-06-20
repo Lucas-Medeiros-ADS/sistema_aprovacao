@@ -55,7 +55,7 @@ function SearchIcon(props: any) {
 }
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(false); // Default to register now!
+  const [entryMode, setEntryMode] = useState<'CHOOSE' | 'LOGIN' | 'REGISTER'>('CHOOSE');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [step, setStep] = useState(1);
 
@@ -97,7 +97,7 @@ export default function LoginPage() {
 
       formData.append("password", password);
       
-      if (!isLogin) {
+      if (entryMode === 'REGISTER') {
         formData.append("name", name);
         formData.append("whatsapp", whatsapp);
         formData.append("age", String(age));
@@ -107,7 +107,7 @@ export default function LoginPage() {
         formData.append("policeClass", policeClass);
       }
 
-      const result = isLogin 
+      const result = entryMode === 'LOGIN' 
         ? await login(formData)
         : await registerUser(formData);
 
@@ -129,11 +129,71 @@ export default function LoginPage() {
       <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-[#B026FF]/10 rounded-full blur-[100px] pointer-events-none fixed" />
       <div className="absolute bottom-[-100px] right-[-100px] w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-[100px] pointer-events-none fixed" />
 
-      <div className={`w-full z-10 animate-fade-in my-auto ${!isLogin && step === 2 ? 'max-w-4xl' : 'max-w-3xl'}`}>
+      <div className={`w-full z-10 my-auto ${entryMode === 'REGISTER' && step === 2 ? 'max-w-4xl' : entryMode === 'CHOOSE' ? 'max-w-6xl' : 'max-w-3xl'}`}>
         
-        {/* LOGIN OR FORGOT PASSWORD FLOW */}
-        {(isLogin || isForgotPassword) ? (
-          <div className="max-w-md mx-auto">
+        {entryMode === 'CHOOSE' ? (
+          /* CHOICE SCREEN */
+          <div className="w-full flex flex-col md:flex-row gap-8 animate-fade-in" style={{ animationDuration: '2s' }}>
+            <div className="text-center md:hidden mb-4">
+              <h1 className="text-3xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
+                Operação Aprovação
+              </h1>
+            </div>
+            {/* Card 1 - Register */}
+            <div 
+              onClick={() => setEntryMode('REGISTER')}
+              className="flex-1 relative group cursor-pointer overflow-hidden rounded-xl border border-[#2A2A2A] hover:border-[#00E5FF] transition-all duration-700 shadow-2xl hover:shadow-[0_0_50px_rgba(0,229,255,0.4)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-[#00E5FF]/10 to-transparent z-10 opacity-80" />
+              <img 
+                src="/images/jinwoo_normal.jpg" 
+                alt="Aluno Inicial" 
+                className="w-full h-[50vh] md:h-[70vh] object-cover object-top transition-transform duration-[1.5s] group-hover:scale-105"
+              />
+              <div className="absolute bottom-0 left-0 w-full p-8 z-20 text-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                <h3 className="font-title text-3xl md:text-4xl text-white tracking-[2px] mb-2 uppercase drop-shadow-lg glow-text">
+                  Aluno Inicial
+                </h3>
+                <p className="font-mono text-[#00E5FF] text-lg tracking-[5px] uppercase font-semibold">
+                  Nível 1 - O Despertar
+                </p>
+                <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <span className="inline-block border border-[#00E5FF] text-[#00E5FF] px-8 py-3 rounded font-title text-[16px] tracking-widest uppercase hover:bg-[#00E5FF] hover:text-black transition-colors">
+                    Iniciar Jornada
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 - Login */}
+            <div 
+              onClick={() => setEntryMode('LOGIN')}
+              className="flex-1 relative group cursor-pointer overflow-hidden rounded-xl border border-[#2A2A2A] hover:border-[#B026FF] transition-all duration-700 shadow-2xl hover:shadow-[0_0_50px_rgba(176,38,255,0.4)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-[#B026FF]/10 to-transparent z-10 opacity-80" />
+              <img 
+                src="/images/shadow_monarch.jpg" 
+                alt="Monarca das Sombras" 
+                className="w-full h-[50vh] md:h-[70vh] object-cover object-top transition-transform duration-[1.5s] group-hover:scale-105"
+              />
+              <div className="absolute bottom-0 left-0 w-full p-8 z-20 text-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                <h3 className="font-title text-3xl md:text-4xl text-white tracking-[2px] mb-2 uppercase drop-shadow-lg glow-text">
+                  Monarca das Sombras
+                </h3>
+                <p className="font-mono text-[#B026FF] text-lg tracking-[5px] uppercase font-semibold">
+                  Já sou Aluno
+                </p>
+                <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <span className="inline-block border border-[#B026FF] text-[#B026FF] px-8 py-3 rounded font-title text-[16px] tracking-widest uppercase hover:bg-[#B026FF] hover:text-white transition-colors">
+                    Acessar Sistema
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (entryMode === 'LOGIN' || isForgotPassword) ? (
+          /* LOGIN OR FORGOT PASSWORD FLOW */
+          <div className="max-w-md mx-auto animate-fade-in">
             <div className="text-center mb-6">
               <div className="flex justify-center mb-3">
                 <Shield className="w-12 h-12 md:w-16 md:h-16 text-[#B026FF] glow-text" />
@@ -147,9 +207,17 @@ export default function LoginPage() {
             </div>
 
             <div className="bg-[#111] border border-[#2A2A2A] rounded-lg p-6 shadow-[0_0_30px_rgba(176,38,255,0.1)]">
-              <h2 className="font-title text-[24px] tracking-[2px] text-white uppercase mb-6 border-b border-[#2A2A2A] pb-3">
-                {isForgotPassword ? "Recuperar Senha" : "Acessar Sistema"}
-              </h2>
+              <div className="flex items-center justify-between border-b border-[#2A2A2A] pb-3 mb-6">
+                <h2 className="font-title text-[24px] tracking-[2px] text-white uppercase">
+                  {isForgotPassword ? "Recuperar Senha" : "Acessar Sistema"}
+                </h2>
+                <button 
+                  onClick={() => setEntryMode('CHOOSE')} 
+                  className="text-gray-500 hover:text-white font-title tracking-widest text-sm uppercase transition-colors"
+                >
+                  VOLTAR
+                </button>
+              </div>
 
               {error && (
                 <div className="bg-red-500/10 border border-red-500/50 text-red-400 font-body p-3 rounded mb-6 text-sm">
@@ -222,7 +290,7 @@ export default function LoginPage() {
                     if (isForgotPassword) {
                       setIsForgotPassword(false);
                     } else {
-                      setIsLogin(false);
+                      setEntryMode('REGISTER');
                       setStep(1);
                     }
                     setError("");
@@ -240,7 +308,7 @@ export default function LoginPage() {
         ) : (
           
           /* REGISTRATION FLOW (Onboarding-like) */
-          <div className="bg-[#111] border border-[#2A2A2A] rounded-lg w-full shadow-[0_0_50px_rgba(176,38,255,0.15)] overflow-hidden relative">
+          <div className="bg-[#111] border border-[#2A2A2A] rounded-lg w-full shadow-[0_0_50px_rgba(176,38,255,0.15)] overflow-hidden relative animate-fade-in">
             {/* PROGRESS BAR */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-[#181818]">
               <div 
@@ -250,13 +318,21 @@ export default function LoginPage() {
             </div>
 
             <div className="p-6 md:p-10 flex flex-col items-center">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl md:text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
-                  Criação de Personagem
-                </h1>
-                <p className="font-body font-semibold text-[#E0E0E0] text-[15px] md:text-[17px] mt-2 tracking-[1px] uppercase">
-                  {step === 1 ? "Identificação Básica do Futuro Policial" : "Escolha sua Especialidade (Classe)"}
-                </p>
+              <div className="w-full flex justify-between items-start mb-6">
+                <button 
+                  onClick={() => setEntryMode('CHOOSE')} 
+                  className="text-gray-500 hover:text-white font-title tracking-widest text-sm uppercase transition-colors"
+                >
+                  VOLTAR
+                </button>
+                <div className="text-center flex-1 pr-10">
+                  <h1 className="text-3xl md:text-4xl font-title tracking-[3px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#B026FF] to-[#00E5FF] uppercase">
+                    Criação de Personagem
+                  </h1>
+                  <p className="font-body font-semibold text-[#E0E0E0] text-[15px] md:text-[17px] mt-2 tracking-[1px] uppercase">
+                    {step === 1 ? "Identificação Básica do Futuro Policial" : "Escolha sua Especialidade (Classe)"}
+                  </p>
+                </div>
               </div>
 
               {error && (
@@ -389,7 +465,7 @@ export default function LoginPage() {
                     <button 
                       type="button"
                       onClick={() => {
-                        setIsLogin(true);
+                        setEntryMode('LOGIN');
                         setError("");
                       }}
                       className="font-body text-[#A0A0A0] hover:text-white transition-colors text-[14px]"
