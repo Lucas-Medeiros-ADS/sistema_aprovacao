@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { FolderKanban, BookOpen, Diamond, ScrollText, LineChart, ChevronRight } from "lucide-react";
+import { FolderKanban, BookOpen, Diamond, ScrollText, LineChart, ChevronRight, ShieldAlert, Target, Swords } from "lucide-react";
 
 export default function ArquivoPage() {
   const leis = [
