@@ -28,6 +28,7 @@ import { StudyModal } from "@/components/StudyModal";
 import { EditalCompleto } from "@/components/EditalCompleto";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { updateUserName } from "./actions";
+import { LeiSecaPlan } from "@/components/LeiSecaPlan";
 
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 
@@ -53,7 +54,7 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   // Real Data from DB
   const [playerName, setPlayerName] = useState(initialUser?.name || "Lucas");
   const [isEditingName, setIsEditingName] = useState(false);
-  const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL' | 'CRONOGRAMA'>('CICLO');
+  const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL' | 'CRONOGRAMA' | 'LEISECA'>('CICLO');
 
   // MOCK DO CRONOGRAMA DA SEMANA
   const mockCronograma = [
@@ -304,11 +305,22 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
               className={`font-body font-semibold text-[16px] tracking-[1px] px-3 py-1 transition-all rounded border flex items-center gap-2 ${activeTab === 'EDITAL' ? 'bg-[#0D1B3E] text-[#4A85D4] border-[#2D5FAA]' : 'bg-transparent text-[#E0E0E0] border-[#2A2A2A] hover:border-gray-600'}`}>
               <LayoutList className="w-4 h-4" /> TODO O EDITAL
             </button>
+            <button 
+              onClick={() => setActiveTab('LEISECA')}
+              className={`font-body font-semibold text-[16px] tracking-[1px] px-3 py-1 transition-all rounded border flex items-center gap-2 ${activeTab === 'LEISECA' ? 'bg-[#3E0D1B] text-[#FF3366] border-[#AA2D4A]' : 'bg-transparent text-[#E0E0E0] border-[#2A2A2A] hover:border-[#FF3366]/50'}`}>
+              <BookOpen className="w-4 h-4" /> LEI SECA
+            </button>
             <div className="flex-1"></div>
-            <span className="font-title text-[17px] text-[#E0E0E0] tracking-[2px] mr-2">Edital Verticalizado</span>
+            <span className="font-title text-[17px] text-[#E0E0E0] tracking-[2px] mr-2">
+              {activeTab === 'LEISECA' ? 'Cronograma 60 Dias' : 'Edital Verticalizado'}
+            </span>
           </div>
           
-          {activeTab === 'CICLO' ? (
+          {activeTab === 'LEISECA' ? (
+            <div className="p-4 md:p-6 bg-[#0a0a0a]">
+              <LeiSecaPlan initialProgress={initialUser?.leiSecaDays || []} />
+            </div>
+          ) : activeTab === 'CICLO' ? (
             <div className="overflow-x-auto max-h-[300px] custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead className="font-body font-semibold text-[16px] text-[#E0E0E0] tracking-[1px] bg-[#181818] border-b border-[#2A2A2A] sticky top-0 z-10">

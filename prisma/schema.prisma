@@ -40,9 +40,25 @@ model User {
   
   // Relações
   missionLogs   MissionLog[]
+  leiSecaDays   LeiSecaDay[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// SISTEMA LEI SECA (60 DIAS)
+// -----------------------------------------------------------------------------
+model LeiSecaDay {
+  id          String   @id @default(uuid())
+  userId      String
+  dayNumber   Int
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dayNumber])
 }
 
 // -----------------------------------------------------------------------------

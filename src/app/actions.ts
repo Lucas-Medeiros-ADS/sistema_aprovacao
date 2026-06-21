@@ -10,7 +10,12 @@ export async function getUserProfile() {
   
   if (!user) return null;
   
-  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+  const dbUser = await prisma.user.findUnique({ 
+    where: { id: user.id },
+    include: {
+      leiSecaDays: true
+    }
+  });
   return dbUser;
 }
 
@@ -351,4 +356,42 @@ export async function getMonthlyStats() {
     totalRight,
     totalDurationMin
   };
+}
+
+export async function getLeiSecaProgress() {
+  const user = await getUserProfile();
+  if (!user) return [];
+
+  const progress = await prisma.leiSecaDay.findMany({
+    where: { userId: user.id },
+  });
+
+  return progress;
+}
+
+export async function toggleLeiSecaDay(dayNumber: number, completed: boolean) {
+  const user = await getUserProfile();
+  if (!user) return null;
+
+  const result = await prisma.leiSecaDay.upsert({
+    where: {
+      userId_dayNumber: {
+        userId: user.id,
+        dayNumber,
+      },
+    },
+    update: {
+      completed,
+      completedAt: completed ? new Date() : null,
+    },
+    create: {
+      userId: user.id,
+      dayNumber,
+      completed,
+      completedAt: completed ? new Date() : null,
+    },
+  });
+  
+  revalidatePath("/");
+  return result;
 }
