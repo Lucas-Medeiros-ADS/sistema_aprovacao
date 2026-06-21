@@ -27,10 +27,25 @@ const INITIAL_DAYS = [
 
 const LEVEL_LABELS = { 1: "Iniciante", 2: "Intermediário", 3: "Avançado" };
 
-export function CycleModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export function CycleModal({ isOpen, onClose, onGenerate }: { isOpen: boolean; onClose: () => void; onGenerate?: () => void }) {
   const [subjects, setSubjects] = useState(INITIAL_SUBJECTS);
   const [days, setDays] = useState(INITIAL_DAYS);
   const [sessionTime, setSessionTime] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+      setIsDone(true);
+      setTimeout(() => {
+        setIsDone(false);
+        if (onGenerate) onGenerate();
+        else onClose();
+      }, 1500);
+    }, 2000);
+  };
 
   if (!isOpen) return null;
 
@@ -199,8 +214,18 @@ export function CycleModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         </div>
 
         <div className="sticky bottom-0 bg-[#111] p-6 border-t border-[#2A2A2A] flex justify-end">
-          <button onClick={onClose} className="bg-[#A4B5A7] text-black font-title text-lg tracking-[2px] px-8 py-2 rounded-full hover:bg-white transition-colors">
-            CONTINUAR
+          <button 
+            onClick={handleGenerate} 
+            disabled={isGenerating || isDone}
+            className={`font-title text-lg tracking-[2px] px-8 py-2 rounded-full transition-all ${
+              isDone 
+                ? 'bg-[#4CAF4C] text-black shadow-[0_0_15px_rgba(76,175,76,0.6)] scale-105' 
+                : isGenerating 
+                  ? 'bg-[#2A2A2A] text-[#888] cursor-not-allowed animate-pulse'
+                  : 'bg-[#A4B5A7] text-black hover:bg-white hover:scale-105'
+            }`}
+          >
+            {isDone ? "CICLO GERADO COM SUCESSO!" : isGenerating ? "PROCESSANDO MATRIZ NEURAL..." : "GERAR MEU CICLO"}
           </button>
         </div>
       </div>

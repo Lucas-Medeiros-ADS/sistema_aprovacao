@@ -370,7 +370,14 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
 
       </div>
       
-      <CycleModal isOpen={isCycleModalOpen} onClose={() => setIsCycleModalOpen(false)} />
+      <CycleModal 
+        isOpen={isCycleModalOpen} 
+        onClose={() => setIsCycleModalOpen(false)} 
+        onGenerate={() => {
+          setIsCycleModalOpen(false);
+          setActiveTab('CRONOGRAMA');
+        }}
+      />
       <StudyModal isOpen={isStudyModalOpen} onClose={() => setIsStudyModalOpen(false)} subjects={subjects} />
     </main>
   );
