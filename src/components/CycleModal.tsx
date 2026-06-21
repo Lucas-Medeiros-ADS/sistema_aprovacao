@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { X, BookOpen } from "lucide-react";
 import { useState } from "react";
 
 const INITIAL_SUBJECTS = [
@@ -65,6 +65,20 @@ export function CycleModal({ isOpen, onClose, onGenerate }: { isOpen: boolean; o
           <button onClick={onClose} className="text-[#E0E0E0] hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        <div className="bg-[#111] p-6 border-b border-[#2A2A2A]">
+          <h3 className="font-title font-bold text-[18px] text-white tracking-[2px] flex items-center gap-2 mb-2">
+            <BookOpen className="w-5 h-5 text-[#4CAF4C]" />
+            ESTRATÉGIA DO EDITAL
+          </h3>
+          <div className="bg-[#181818] p-4 rounded border border-[#2A2A2A] text-[#E0E0E0] text-[14px] leading-relaxed">
+            <span className="text-[#4CAF4C] font-bold">Dica Tática PPRN 2026:</span> Ajuste as horas focado nos pesos da prova! <br/>
+            • <strong className="text-white">40%:</strong> Legislação Específica + Execução Penal<br/>
+            • <strong className="text-white">25%:</strong> Direito Penal e Processo Penal<br/>
+            • <strong className="text-white">20%:</strong> Constitucional + Administrativo + Direitos Humanos<br/>
+            • <strong className="text-white">15%:</strong> Português, Ética e História do RN
+          </div>
         </div>
 
         <div className="p-8 space-y-12 flex-1 max-w-3xl mx-auto w-full">
