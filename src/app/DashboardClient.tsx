@@ -19,7 +19,8 @@ import {
   Brain,
   Users,
   CalendarDays,
-  Clock
+  Clock,
+  Clock3
 } from "lucide-react";
 import { useState } from "react";
 import { CycleModal } from "@/components/CycleModal";
@@ -93,6 +94,21 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
       
       <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-4">
         
+        {/* COUNTDOWN BANNER */}
+        <div className="bg-[#111] border border-[#2A2A2A] border-l-4 border-l-[#FF3366] p-4 rounded flex items-center justify-between glow-hover shadow-[0_0_20px_rgba(255,51,102,0.1)]">
+          <div className="flex flex-col">
+            <h3 className="font-title text-[20px] text-white tracking-[2px] flex items-center gap-2">
+              <Clock3 className="w-5 h-5 text-[#FF3366]" />
+              PPRN 2026: A BATALHA SE APROXIMA
+            </h3>
+            <p className="font-body font-semibold text-[#E0E0E0] text-[15px] mt-1">Sua prova objetiva será no dia 13 de Setembro de 2026.</p>
+          </div>
+          <div className="flex flex-col items-center justify-center bg-[#181818] border border-[#2A2A2A] px-6 py-2 rounded">
+            <span className="font-title text-4xl text-[#FF3366] glow-text-red leading-none">84</span>
+            <span className="font-body font-bold text-[12px] tracking-[2px] text-[#FF3366] mt-1">DIAS RESTANTES</span>
+          </div>
+        </div>
+
         {/* TOP GRID: PLAYER STATUS & RADAR */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           

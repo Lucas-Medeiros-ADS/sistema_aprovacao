@@ -89,7 +89,7 @@ async function main() {
     {
       name: 'Direito Constitucional',
       colorHex: '#2196F3',
-      importance: 2, // Peso 2
+      importance: 1, // Peso 1 (Corrigido pelo edital oficial)
       topics: [
         'Constituição: Conceito, classificação e princípios fundamentais',
         'Aplicabilidade das normas e Interpretação constitucional',
@@ -106,7 +106,7 @@ async function main() {
     {
       name: 'Direito Administrativo',
       colorHex: '#00BCD4',
-      importance: 2, // Peso 2
+      importance: 1, // Peso 1 (Corrigido pelo edital oficial)
       topics: [
         'Estado, governo e Administração Pública',
         'Direito administrativo: Conceito, Objeto e Fontes',
@@ -127,7 +127,7 @@ async function main() {
     {
       name: 'Direitos Humanos',
       colorHex: '#E91E63',
-      importance: 2, // Peso 2
+      importance: 1, // Peso 1 (Corrigido pelo edital oficial)
       topics: [
         'Teoria Geral: Conceito, evolução histórica e gerações',
         'Direitos Humanos na Constituição Federal',
