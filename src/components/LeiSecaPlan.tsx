@@ -72,7 +72,7 @@ export function LeiSecaPlan({ initialProgress }: { initialProgress: any[] }) {
               <div className="flex justify-between items-center mb-3 border-b border-[#181818] pb-2">
                 <div className="font-title text-[18px] tracking-[2px] text-white flex items-center gap-2">
                   DIA {dayData.day}
-                  {hasWeight2 && !isCompleted && <AlertTriangle className="w-4 h-4 text-[#FF3366]" title="Prioridade Máxima (Peso 2)" />}
+                  {hasWeight2 && !isCompleted && <span title="Prioridade Máxima (Peso 2)"><AlertTriangle className="w-4 h-4 text-[#FF3366]" /></span>}
                 </div>
                 <button 
                   onClick={() => handleToggle(dayData.day, isCompleted)}
