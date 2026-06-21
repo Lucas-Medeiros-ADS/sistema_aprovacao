@@ -87,7 +87,7 @@ export function Sidebar({ user }: { user?: any }) {
       <div className="flex flex-col border-t border-[#2A2A2A]">
         {/* Marcha Operacional (Streak) */}
         <div onClick={() => setIsMarchaOpen(true)} className="p-4 border-b border-[#2A2A2A] text-center cursor-pointer hover:bg-[#181818] transition-colors" title="Marcha Operacional">
-          <div className="font-title text-2xl text-[#FFB800] leading-none">12</div>
+          <div className="font-title text-2xl text-[#FFB800] leading-none">1</div>
           <div className="text-[17px] flex items-center justify-center gap-1 text-[#FFB800] mt-1">
             <Flame className="w-4 h-4 fill-current" /> <span className="font-body font-semibold text-[16px] hidden md:block tracking-widest text-[#E0E0E0]">MARCHA</span>
           </div>

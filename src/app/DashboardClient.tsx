@@ -13,7 +13,11 @@ import {
   RefreshCw,
   Plus,
   Edit2,
-  ExternalLink
+  ExternalLink,
+  Target,
+  Dumbbell,
+  Brain,
+  Users
 } from "lucide-react";
 import { useState } from "react";
 import { CycleModal } from "@/components/CycleModal";
@@ -141,6 +145,49 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
                 </div>
                 <ExternalLink className="w-4 h-4 text-[#E0E0E0] group-hover:text-[#00E5FF]" />
               </a>
+            </div>
+          </div>
+        </div>
+
+        {/* ATRIBUTOS EVOLUTIVOS */}
+        <div className="bg-[#111] rounded border border-[#2A2A2A] p-4 flex flex-col glow-hover overflow-hidden relative">
+          <div className="absolute right-0 top-0 opacity-5 pointer-events-none w-full h-full overflow-hidden">
+            <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#00E5FF] blur-[150px] rounded-full"></div>
+          </div>
+          <h3 className="font-title text-[17px] text-[#E0E0E0] tracking-[2px] border-b border-[#2A2A2A] pb-2 mb-4">SEUS ATRIBUTOS EVOLUTIVOS</h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+            {/* Força */}
+            <div className="bg-[#181818] border border-[#2A2A2A] hover:border-[#FF5555]/50 transition-colors rounded-lg p-4 flex flex-col items-center justify-center text-center group cursor-default">
+              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#FF5555]/30 flex items-center justify-center mb-2 group-hover:shadow-[0_0_15px_rgba(255,85,85,0.4)] transition-shadow">
+                <Dumbbell className="w-6 h-6 text-[#FF5555]" />
+              </div>
+              <p className="font-body font-bold text-xs text-[#E0E0E0] tracking-[2px]">FORÇA</p>
+              <p className="font-title text-xl text-[#FF5555] mt-1">+3</p>
+            </div>
+            {/* Foco */}
+            <div className="bg-[#181818] border border-[#2A2A2A] hover:border-[#00E5FF]/50 transition-colors rounded-lg p-4 flex flex-col items-center justify-center text-center group cursor-default">
+              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#00E5FF]/30 flex items-center justify-center mb-2 group-hover:shadow-[0_0_15px_rgba(0,229,255,0.4)] transition-shadow">
+                <Target className="w-6 h-6 text-[#00E5FF]" />
+              </div>
+              <p className="font-body font-bold text-xs text-[#E0E0E0] tracking-[2px]">FOCO</p>
+              <p className="font-title text-xl text-[#00E5FF] mt-1">+5</p>
+            </div>
+            {/* Sabedoria */}
+            <div className="bg-[#181818] border border-[#2A2A2A] hover:border-[#B026FF]/50 transition-colors rounded-lg p-4 flex flex-col items-center justify-center text-center group cursor-default">
+              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#B026FF]/30 flex items-center justify-center mb-2 group-hover:shadow-[0_0_15px_rgba(176,38,255,0.4)] transition-shadow">
+                <Brain className="w-6 h-6 text-[#B026FF]" />
+              </div>
+              <p className="font-body font-bold text-xs text-[#E0E0E0] tracking-[2px]">SABEDORIA</p>
+              <p className="font-title text-xl text-[#B026FF] mt-1">+2</p>
+            </div>
+            {/* Carisma */}
+            <div className="bg-[#181818] border border-[#2A2A2A] hover:border-[#FFB800]/50 transition-colors rounded-lg p-4 flex flex-col items-center justify-center text-center group cursor-default">
+              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#FFB800]/30 flex items-center justify-center mb-2 group-hover:shadow-[0_0_15px_rgba(255,184,0,0.4)] transition-shadow">
+                <Users className="w-6 h-6 text-[#FFB800]" />
+              </div>
+              <p className="font-body font-bold text-xs text-[#E0E0E0] tracking-[2px]">CARISMA</p>
+              <p className="font-title text-xl text-[#FFB800] mt-1">+1</p>
             </div>
           </div>
         </div>

@@ -115,6 +115,78 @@ export default function ArquivoPage() {
 
         </div>
 
+        {/* ITENS DE RECOMPENSA (RPG CARDS) */}
+        <div className="mt-12">
+          <div className="flex items-center gap-3 mb-6 border-b border-[#2A2A2A] pb-4">
+            <Diamond className="w-8 h-8 text-white" />
+            <h2 className="text-2xl font-title text-white tracking-[2px]">ITENS DE RECOMPENSA</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            
+            {/* Card 1: Comum */}
+            <div className="bg-[#111] border border-[#2A2A2A] rounded-xl overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer relative shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-700/20 to-transparent pointer-events-none"></div>
+              <div className="h-48 bg-gradient-to-b from-gray-800 to-[#111] flex items-center justify-center relative">
+                <div className="absolute top-2 right-2 bg-gray-600 text-white text-[10px] font-title tracking-widest px-2 py-1 rounded">COMUM</div>
+                <ShieldAlert className="w-16 h-16 text-gray-400 drop-shadow-[0_0_15px_rgba(156,163,175,0.5)] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="p-4 border-t border-[#2A2A2A]">
+                <h3 className="font-title text-lg text-white tracking-[1px] mb-1">Brasão do Iniciante</h3>
+                <p className="font-body text-xs text-gray-400 leading-relaxed">
+                  O primeiro símbolo de quem ousa iniciar a jornada da evolução.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Incomum */}
+            <div className="bg-[#111] border border-[#2A2A2A] rounded-xl overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer relative shadow-[0_0_15px_rgba(255,184,0,0.1)] hover:shadow-[0_0_25px_rgba(255,184,0,0.3)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#FFB800]/10 to-transparent pointer-events-none"></div>
+              <div className="h-48 bg-gradient-to-b from-[#FFB800]/20 to-[#111] flex items-center justify-center relative">
+                <div className="absolute top-2 right-2 bg-[#FFB800] text-black text-[10px] font-title tracking-widest px-2 py-1 rounded">INCOMUM</div>
+                <BookOpen className="w-16 h-16 text-[#FFB800] drop-shadow-[0_0_15px_rgba(255,184,0,0.5)] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="p-4 border-t border-[#2A2A2A]">
+                <h3 className="font-title text-lg text-[#FFB800] tracking-[1px] mb-1">Troféu da Disciplina</h3>
+                <p className="font-body text-xs text-gray-400 leading-relaxed">
+                  Concedido àqueles que demonstraram constância de 7 dias seguidos.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: Incomum */}
+            <div className="bg-[#111] border border-[#2A2A2A] rounded-xl overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer relative shadow-[0_0_15px_rgba(0,229,255,0.1)] hover:shadow-[0_0_25px_rgba(0,229,255,0.3)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 to-transparent pointer-events-none"></div>
+              <div className="h-48 bg-gradient-to-b from-[#00E5FF]/20 to-[#111] flex items-center justify-center relative">
+                <div className="absolute top-2 right-2 bg-[#00E5FF] text-black text-[10px] font-title tracking-widest px-2 py-1 rounded">INCOMUM</div>
+                <Target className="w-16 h-16 text-[#00E5FF] drop-shadow-[0_0_15px_rgba(0,229,255,0.5)] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="p-4 border-t border-[#2A2A2A]">
+                <h3 className="font-title text-lg text-[#00E5FF] tracking-[1px] mb-1">Emblema do Foco</h3>
+                <p className="font-body text-xs text-gray-400 leading-relaxed">
+                  Para quem conquistou clareza mental e concentração imbatível.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 4: Raro */}
+            <div className="bg-[#111] border border-[#2A2A2A] rounded-xl overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer relative shadow-[0_0_15px_rgba(176,38,255,0.1)] hover:shadow-[0_0_30px_rgba(176,38,255,0.4)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B026FF]/20 to-transparent pointer-events-none"></div>
+              <div className="h-48 bg-gradient-to-b from-[#B026FF]/30 to-[#111] flex items-center justify-center relative">
+                <div className="absolute top-2 right-2 bg-[#B026FF] text-white text-[10px] font-title tracking-widest px-2 py-1 rounded shadow-[0_0_10px_rgba(176,38,255,0.8)]">RARO</div>
+                <Swords className="w-16 h-16 text-[#B026FF] drop-shadow-[0_0_20px_rgba(176,38,255,0.8)] group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="p-4 border-t border-[#2A2A2A]">
+                <h3 className="font-title text-lg text-[#B026FF] tracking-[1px] mb-1">Lâmina da Aprovação</h3>
+                <p className="font-body text-xs text-gray-400 leading-relaxed">
+                  Apenas os mais dedicados conseguem empunhar esta arma lendária.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </main>
   );

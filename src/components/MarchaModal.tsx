@@ -119,13 +119,14 @@ export function MarchaModal({ isOpen, onClose }: MarchaModalProps) {
           </div>
 
           <div className="pt-4 border-t border-[#2A2A2A]">
-            <h3 className="font-title text-[18px] text-white tracking-[1px] mb-1">12 dias seguidos de marcha!</h3>
-            <p className="font-body font-medium text-[17px] text-[#E0E0E0] mb-4">Faltam 3 dias para seu novo recorde!</p>
+            <h3 className="font-title text-[18px] text-white tracking-[1px] mb-1">1 dia de marcha!</h3>
+            <p className="font-body font-medium text-[17px] text-[#E0E0E0] mb-4">Continue focado para construir seu recorde!</p>
             
             <div className="flex justify-between gap-1 mb-6">
               {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((day, idx) => {
-                const isPast = idx < 3; // Dom, Seg, Ter are done
-                const isCurrent = idx === 3; // Qua is today (mock)
+                const todayIdx = new Date().getDay();
+                const isPast = false; // Started today
+                const isCurrent = idx === todayIdx;
                 
                 let boxClass = "border-[#2A2A2A] text-[#E0E0E0] bg-transparent";
                 if (isPast || isCurrent) {
@@ -147,14 +148,14 @@ export function MarchaModal({ isOpen, onClose }: MarchaModalProps) {
               <div>
                 <p className="font-body font-medium text-[16px] text-[#E0E0E0] mb-1">Marcha atual</p>
                 <div className="flex items-center gap-2">
-                  <span className="font-title text-[28px] text-white">12</span>
+                  <span className="font-title text-[28px] text-white">1</span>
                   <Flame className="w-5 h-5 text-[#FFB800]" />
                 </div>
               </div>
               <div>
                 <p className="font-body font-medium text-[16px] text-[#E0E0E0] mb-1">Recorde</p>
                 <div className="flex items-center gap-2">
-                  <span className="font-title text-[28px] text-[#E0E0E0]">15</span>
+                  <span className="font-title text-[28px] text-[#E0E0E0]">1</span>
                   <Flame className="w-5 h-5 text-[#FFB800] opacity-50" />
                 </div>
               </div>

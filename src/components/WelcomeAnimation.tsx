@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield } from "lucide-react";
 
 export function WelcomeAnimation({ userName }: { userName?: string }) {
   const [stage, setStage] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [loadingText, setLoadingText] = useState("");
 
   useEffect(() => {
     // Only play once per session
@@ -16,16 +16,18 @@ export function WelcomeAnimation({ userName }: { userName?: string }) {
     setIsVisible(true);
     sessionStorage.setItem("welcomePlayed", "true");
 
-    const t1 = setTimeout(() => setStage(1), 500); // INICIANDO...
-    const t2 = setTimeout(() => setStage(2), 2000); // Flash + Bem vindo
-    const t3 = setTimeout(() => setStage(3), 4500); // Fade out
-    const t4 = setTimeout(() => setIsVisible(false), 5500); // Remove from DOM
+    const t1 = setTimeout(() => { setStage(1); setLoadingText("CHECKING_BIOMETRICS..."); }, 1500); 
+    const t2 = setTimeout(() => setLoadingText("SYNCING_WITH_DATABASE..."), 2200);
+    const t3 = setTimeout(() => setLoadingText("ESTABLISHING_SECURE_CONNECTION..."), 2800);
+    const t4 = setTimeout(() => setLoadingText("SYSTEM_READY."), 3400);
+
+    const t5 = setTimeout(() => setStage(2), 4000); // Bem vindo + O DESPERTAR FOI LIBERADO
+    const t6 = setTimeout(() => setStage(3), 6500); // Fade out
+    const t7 = setTimeout(() => setIsVisible(false), 7500); // Remove from DOM
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+      clearTimeout(t5); clearTimeout(t6); clearTimeout(t7);
     };
   }, []);
 
@@ -37,52 +39,70 @@ export function WelcomeAnimation({ userName }: { userName?: string }) {
         stage >= 3 ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00E5FF]/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* Background Grid Pattern (like the video) */}
+      <div 
+        className="absolute inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(#00E5FF 1px, transparent 1px), linear-gradient(90deg, #00E5FF 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+          backgroundPosition: 'center center'
+        }}
+      />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00E5FF]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Floating Particles (Simulated with static divs for simplicity, animated via CSS) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute bg-[#00E5FF] w-1 h-1 rounded-full animate-pulse"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.5 + 0.2,
-              animationDuration: `${Math.random() * 2 + 1}s`,
-              boxShadow: "0 0 10px #00E5FF, 0 0 20px #00E5FF"
-            }}
-          />
-        ))}
-      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center text-center w-full max-w-2xl px-4">
+        {stage === 0 && (
+          <div className="animate-pulse flex flex-col items-center gap-4">
+             <div className="w-24 h-24 rounded-full border-2 border-[#00E5FF] shadow-[0_0_15px_#00E5FF] flex items-center justify-center">
+               <div className="w-20 h-20 rounded-full border border-[#00E5FF]/50 animate-ping" />
+             </div>
+             <h1 className="font-mono text-[#00E5FF] text-2xl tracking-[5px] uppercase mt-4">
+               INICIAR SISTEMA
+             </h1>
+             <p className="font-body text-[#00E5FF]/70 text-xs tracking-[2px] uppercase mt-2">
+               (Preparando Conexão Neural...)
+             </p>
+          </div>
+        )}
 
-      <div className="relative z-10 flex flex-col items-center justify-center text-center">
-        {stage >= 1 && stage < 2 && (
-          <div className="animate-pulse">
-            <h1 className="font-mono text-[#00E5FF] text-2xl md:text-3xl tracking-[10px] uppercase shadow-text drop-shadow-[0_0_15px_rgba(0,229,255,0.8)]">
-              [ INICIANDO SISTEMA ]
-            </h1>
-            <div className="w-64 h-1 bg-[#181818] mt-6 mx-auto rounded overflow-hidden">
+        {stage === 1 && (
+          <div className="w-full flex flex-col items-start font-mono text-[#00E5FF] text-sm tracking-[2px] space-y-2">
+            <div className="flex flex-col items-start gap-1 mb-4 h-10">
+              <span className="opacity-80 border-l-2 border-[#00E5FF] pl-2">&gt; {loadingText}</span>
+            </div>
+            
+            <div className="w-full flex items-center justify-between mt-8">
+               <span>CARREGANDO SISTEMA</span>
+               <span className="animate-pulse">100%</span>
+            </div>
+            <div className="w-full h-1.5 bg-[#181818] mt-2 rounded overflow-hidden">
               <div className="h-full bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] w-full origin-left animate-progress" />
             </div>
           </div>
         )}
 
         {stage >= 2 && (
-          <div className="animate-bounce-in">
-            <Shield className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 text-[#B026FF] drop-shadow-[0_0_20px_rgba(176,38,255,0.8)]" />
-            <h2 className="font-title text-4xl md:text-6xl text-white tracking-[5px] uppercase font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#B026FF] drop-shadow-[0_0_25px_rgba(0,229,255,0.5)]">
-              Bem-vindo, Futuro Policial
-            </h2>
-            {userName && (
-              <p className="font-mono text-xl md:text-2xl mt-4 text-[#E0E0E0] tracking-[5px] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                {userName}
-              </p>
-            )}
-            <p className="font-body text-[#00E5FF] mt-8 tracking-[3px] uppercase text-sm animate-pulse">
-              A evolução não para.
-            </p>
+          <div className="animate-bounce-in w-full">
+            <div className="mb-8 border-b border-[#00E5FF]/30 pb-6 text-left pl-4">
+              <h2 className="font-mono text-xl text-[#00E5FF] tracking-[2px]">
+                Jogador encontrado.
+              </h2>
+              <h2 className="font-mono text-xl text-[#00E5FF] tracking-[2px] mt-1">
+                Nível atual: {userName ? "Iniciado" : "Desconhecido"}.
+              </h2>
+              {userName && (
+                <p className="font-mono text-xl mt-4 text-[#E0E0E0] tracking-[2px]">
+                  Bem-vindo, {userName}.
+                </p>
+              )}
+            </div>
+            <div className="mt-12 flex items-center justify-center gap-4">
+              <div className="hidden md:block h-[1px] w-16 bg-[#00E5FF]" />
+              <h1 className="font-title text-3xl md:text-5xl text-white tracking-[8px] md:tracking-[10px] uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#B026FF] drop-shadow-[0_0_20px_rgba(176,38,255,0.8)] whitespace-nowrap">
+                O DESPERTAR FOI LIBERADO
+              </h1>
+              <div className="hidden md:block h-[1px] w-16 bg-[#00E5FF]" />
+            </div>
           </div>
         )}
       </div>
@@ -93,11 +113,10 @@ export function WelcomeAnimation({ userName }: { userName?: string }) {
           100% { transform: scaleX(1); }
         }
         .animate-progress {
-          animation: progress 1.5s ease-in-out forwards;
+          animation: progress 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         @keyframes bounce-in {
-          0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
-          50% { transform: scale(1.05); opacity: 1; filter: blur(0px); }
+          0% { transform: scale(0.9); opacity: 0; filter: blur(10px); }
           100% { transform: scale(1); opacity: 1; filter: blur(0px); }
         }
         .animate-bounce-in {
