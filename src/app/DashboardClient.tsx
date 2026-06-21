@@ -17,7 +17,9 @@ import {
   Target,
   Dumbbell,
   Brain,
-  Users
+  Users,
+  CalendarDays,
+  Clock
 } from "lucide-react";
 import { useState } from "react";
 import { CycleModal } from "@/components/CycleModal";
@@ -50,7 +52,18 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   // Real Data from DB
   const [playerName, setPlayerName] = useState(initialUser?.name || "Lucas");
   const [isEditingName, setIsEditingName] = useState(false);
-  const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL'>('CICLO');
+  const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL' | 'CRONOGRAMA'>('CICLO');
+
+  // MOCK DO CRONOGRAMA DA SEMANA
+  const mockCronograma = [
+    { dia: "SEGUNDA", horas: "4h", blocos: [{ nome: "Língua Portuguesa", tempo: "2h" }, { nome: "Direito Penal", tempo: "2h" }], atual: true },
+    { dia: "TERÇA", horas: "4h", blocos: [{ nome: "Direito Constitucional", tempo: "2h" }, { nome: "Direitos Humanos", tempo: "2h" }], atual: false },
+    { dia: "QUARTA", horas: "4h", blocos: [{ nome: "Direito Administrativo", tempo: "2h" }, { nome: "Legislação Específica", tempo: "2h" }], atual: false },
+    { dia: "QUINTA", horas: "4h", blocos: [{ nome: "Ética Profissional", tempo: "2h" }, { nome: "Língua Portuguesa", tempo: "2h" }], atual: false },
+    { dia: "SEXTA", horas: "4h", blocos: [{ nome: "História e Geo. RN", tempo: "2h" }, { nome: "Direitos Humanos", tempo: "2h" }], atual: false },
+    { dia: "SÁBADO", horas: "6h", blocos: [{ nome: "Revisão Geral", tempo: "3h" }, { nome: "Simulado", tempo: "3h" }], atual: false },
+    { dia: "DOMINGO", horas: "5h", blocos: [{ nome: "Correção Simulado", tempo: "2h" }, { nome: "Redação", tempo: "3h" }], atual: false },
+  ];
 
   const handleSaveName = async () => {
     setIsEditingName(false);
@@ -266,9 +279,14 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
               MEU CICLO
             </button>
             <button 
+              onClick={() => setActiveTab('CRONOGRAMA')}
+              className={`font-body font-semibold text-[16px] tracking-[1px] px-3 py-1 transition-all rounded border flex items-center gap-2 ${activeTab === 'CRONOGRAMA' ? 'bg-[#0D1B3E] text-[#4A85D4] border-[#2D5FAA]' : 'bg-transparent text-[#E0E0E0] border-[#2A2A2A] hover:border-gray-600'}`}>
+              <CalendarDays className="w-4 h-4" /> MEU CRONOGRAMA
+            </button>
+            <button 
               onClick={() => setActiveTab('EDITAL')}
-              className={`font-body font-semibold text-[16px] tracking-[1px] px-3 py-1 transition-all rounded border ${activeTab === 'EDITAL' ? 'bg-[#0D1B3E] text-[#4A85D4] border-[#2D5FAA]' : 'bg-transparent text-[#E0E0E0] border-[#2A2A2A] hover:border-gray-600'}`}>
-              TODO O EDITAL
+              className={`font-body font-semibold text-[16px] tracking-[1px] px-3 py-1 transition-all rounded border flex items-center gap-2 ${activeTab === 'EDITAL' ? 'bg-[#0D1B3E] text-[#4A85D4] border-[#2D5FAA]' : 'bg-transparent text-[#E0E0E0] border-[#2A2A2A] hover:border-gray-600'}`}>
+              <LayoutList className="w-4 h-4" /> TODO O EDITAL
             </button>
             <div className="flex-1"></div>
             <span className="font-title text-[17px] text-[#E0E0E0] tracking-[2px] mr-2">Edital Verticalizado</span>
@@ -321,8 +339,32 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
                 </tbody>
               </table>
             </div>
-          ) : (
+          ) : activeTab === 'EDITAL' ? (
             <EditalCompleto subjects={subjects} />
+          ) : (
+            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+              {mockCronograma.map((diaInfo, idx) => (
+                <div key={idx} className={`bg-[#181818] border ${diaInfo.atual ? 'border-[#4CAF4C] shadow-[0_0_15px_rgba(76,175,76,0.2)]' : 'border-[#2A2A2A]'} rounded flex flex-col h-full overflow-hidden`}>
+                  <div className={`p-2 text-center border-b ${diaInfo.atual ? 'bg-[#1C5C1C]/20 border-[#4CAF4C]' : 'bg-[#111] border-[#2A2A2A]'}`}>
+                    <h4 className={`font-title tracking-[2px] ${diaInfo.atual ? 'text-[#4CAF4C]' : 'text-white'}`}>{diaInfo.dia}</h4>
+                    <span className="text-xs font-body font-semibold text-gray-400 flex justify-center items-center gap-1 mt-1"><Clock className="w-3 h-3" /> {diaInfo.horas} de Foco</span>
+                  </div>
+                  <div className="p-3 flex-1 flex flex-col gap-3">
+                    {diaInfo.blocos.map((bloco, bIdx) => (
+                      <div key={bIdx} className="bg-[#111] rounded border border-[#2A2A2A] p-2 hover:border-gray-600 transition-colors">
+                        <span className="text-[10px] font-bold tracking-widest text-[#B026FF] uppercase mb-1 block">BLOCO {bIdx + 1} • {bloco.tempo}</span>
+                        <p className="font-body font-semibold text-[14px] text-gray-300 leading-tight">{bloco.nome}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {diaInfo.atual && (
+                    <div className="bg-[#4CAF4C] text-black font-title tracking-[2px] text-center text-[12px] py-1">
+                      HOJE
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
 

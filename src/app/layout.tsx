@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Bebas_Neue, Share_Tech_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
-import { GlobalNotifications } from "@/components/GlobalNotifications";
 import { getUserProfile } from "./actions";
 
 const bebasNeue = Bebas_Neue({
@@ -43,7 +42,6 @@ export default async function RootLayout({
         <div className="flex-1 flex flex-col h-screen overflow-y-auto">
           {children}
         </div>
-        <GlobalNotifications />
       </body>
     </html>
   );
