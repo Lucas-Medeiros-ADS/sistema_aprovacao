@@ -3,7 +3,7 @@
 import { Target, Play, RotateCcw, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 
-export function Header({ onOpenCycleModal }: { onOpenCycleModal?: () => void }) {
+export function Header({ onOpenCycleModal, onOpenStudyModal }: { onOpenCycleModal?: () => void, onOpenStudyModal?: () => void }) {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -60,7 +60,10 @@ export function Header({ onOpenCycleModal }: { onOpenCycleModal?: () => void }) 
           <Target className="w-4 h-4" /> GERAR CICLO
         </button>
         
-        <button className="bg-[#0D1B3E] text-[#4A85D4] border border-[#1B3A6B] font-title text-[16px] tracking-[3px] px-6 py-2 hover:bg-[#2D5FAA] hover:border-[#4A85D4] hover:text-white transition-all flex items-center gap-2 rounded">
+        <button 
+          onClick={onOpenStudyModal}
+          className="bg-[#0D1B3E] text-[#4A85D4] border border-[#1B3A6B] font-title text-[16px] tracking-[3px] px-6 py-2 hover:bg-[#2D5FAA] hover:border-[#4A85D4] hover:text-white transition-all flex items-center gap-2 rounded"
+        >
           INICIAR MISSÃO
         </button>
         

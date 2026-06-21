@@ -73,7 +73,10 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
     <main className="flex-1 bg-system-bg relative h-full overflow-y-auto">
       <WelcomeAnimation userName={playerName} />
       {showOnboarding && <OnboardingModal initialName={initialUser?.name || ""} />}
-      <Header onOpenCycleModal={() => setIsCycleModalOpen(true)} />
+      <Header 
+        onOpenCycleModal={() => setIsCycleModalOpen(true)} 
+        onOpenStudyModal={() => setIsStudyModalOpen(true)}
+      />
       
       <div className="p-4 md:p-6 max-w-[1400px] mx-auto space-y-4">
         
