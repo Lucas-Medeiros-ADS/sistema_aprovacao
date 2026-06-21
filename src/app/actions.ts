@@ -10,12 +10,33 @@ export async function getUserProfile() {
   
   if (!user) return null;
   
-  const dbUser = await prisma.user.findUnique({ 
+  let dbUser = await prisma.user.findUnique({ 
     where: { id: user.id },
     include: {
       leiSecaDays: true
     }
   });
+
+  if (!dbUser && user.email) {
+    const existingByEmail = await prisma.user.findUnique({ where: { email: user.email } });
+    if (existingByEmail) {
+      dbUser = await prisma.user.update({
+        where: { email: user.email },
+        data: { id: user.id },
+        include: { leiSecaDays: true }
+      });
+    } else {
+      dbUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          name: "Caçador",
+        },
+        include: { leiSecaDays: true }
+      });
+    }
+  }
+
   return dbUser;
 }
 
