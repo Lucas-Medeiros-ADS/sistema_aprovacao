@@ -29,6 +29,7 @@ import { EditalCompleto } from "@/components/EditalCompleto";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { updateUserName } from "./actions";
 import { LeiSecaPlan } from "@/components/LeiSecaPlan";
+import { getCronogramaAtual } from "@/lib/mockData";
 
 import { WelcomeAnimation } from "@/components/WelcomeAnimation";
 
@@ -56,6 +57,7 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   const [isEditingName, setIsEditingName] = useState(false);
   const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL' | 'CRONOGRAMA' | 'LEISECA'>('CICLO');
   const [remainingDays, setRemainingDays] = useState(84);
+  const [mockCronograma, setMockCronograma] = useState<any[]>([]);
 
   useEffect(() => {
     const targetDate = new Date("2026-09-13T00:00:00-03:00");
@@ -63,19 +65,10 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
     const diffTime = targetDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     setRemainingDays(diffDays > 0 ? diffDays : 0);
+    
+    setMockCronograma(getCronogramaAtual());
   }, []);
 
-  // MOCK DO CRONOGRAMA DA SEMANA
-  const mockCronograma = [
-    { dia: "SEGUNDA", horas: "4h", blocos: [{ nome: "Língua Portuguesa", tempo: "2h", assunto: "Compreensão e Interpretação", tipo: "TEORIA" }, { nome: "Direito Penal", tempo: "2h", assunto: "Crimes contra o Patrimônio", tipo: "QUESTÕES" }], atual: true },
-    { dia: "TERÇA", horas: "4h", blocos: [{ nome: "Direito Constitucional", tempo: "2h", assunto: "Direitos Fundamentais", tipo: "TEORIA" }, { nome: "Direitos Humanos", tempo: "2h", assunto: "Pacto de San José", tipo: "QUESTÕES" }], atual: false },
-    { dia: "QUARTA", horas: "4h", blocos: [{ nome: "Direito Administrativo", tempo: "2h", assunto: "Atos Administrativos", tipo: "REVISÃO" }, { nome: "Legislação Específica", tempo: "2h", assunto: "Estatuto da PM", tipo: "TEORIA" }], atual: false },
-    { dia: "QUINTA", horas: "4h", blocos: [{ nome: "Ética Profissional", tempo: "2h", assunto: "Código de Ética", tipo: "TEORIA" }, { nome: "Língua Portuguesa", tempo: "2h", assunto: "Sintaxe", tipo: "QUESTÕES" }], atual: false },
-    { dia: "SEXTA", horas: "4h", blocos: [{ nome: "História e Geo. RN", tempo: "2h", assunto: "Geografia Física do RN", tipo: "TEORIA" }, { nome: "Direitos Humanos", tempo: "2h", assunto: "DUDH", tipo: "QUESTÕES" }], atual: false },
-    { dia: "SÁBADO", horas: "6h", blocos: [{ nome: "Revisão Geral", tempo: "3h", assunto: "Todos os tópicos da semana", tipo: "REVISÃO" }, { nome: "Simulado", tempo: "3h", assunto: "Simulado Inédito", tipo: "PRÁTICA" }], atual: false },
-    { dia: "DOMINGO", horas: "5h", blocos: [{ nome: "Correção Simulado", tempo: "2h", assunto: "Análise de Erros", tipo: "REVISÃO" }, { nome: "Redação", tempo: "3h", assunto: "Tema Atualidades", tipo: "PRÁTICA" }], atual: false },
-  ];
-  
   const diaAtual = mockCronograma.find(d => d.atual);
 
   const handleSaveName = async () => {

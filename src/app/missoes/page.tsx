@@ -1,12 +1,16 @@
 import { Header } from "@/components/Header";
-import { Target, Flame, Timer, Footprints } from "lucide-react";
+import { Target, Flame, Timer, Footprints, BookOpen } from "lucide-react";
 import { getDailyProgress } from "../actions";
+import { getCronogramaAtual } from "@/lib/mockData";
 
 export default async function MissoesPage() {
   const progress = await getDailyProgress();
+  const cronograma = getCronogramaAtual();
+  const diaAtual = cronograma.find(d => d.atual);
   
-  // Metas hardcoded (padrão)
-  const GOAL_MINUTES = 240; // 4 horas
+  // Metas dinâmicas
+  const horasMeta = diaAtual ? parseInt(diaAtual.horas) : 4;
+  const GOAL_MINUTES = horasMeta * 60;
   const GOAL_QUESTIONS = 50;
   
   const currentMinutes = progress?.durationMin || 0;
@@ -42,9 +46,9 @@ export default async function MissoesPage() {
                 DIÁRIA
               </div>
               <h3 className="text-lg font-bold text-white mb-2 pr-16 mt-2 flex items-center gap-2">
-                <Timer className="w-5 h-5 text-[#00E5FF]" /> Bater a Meta Líquida
+                <Timer className="w-5 h-5 text-[#00E5FF]" /> Meta Líquida: {diaAtual?.dia}
               </h3>
-              <p className="text-sm text-[#E0E0E0] mb-4">Concluir {GOAL_MINUTES / 60} horas de estudo focado.</p>
+              <p className="text-sm text-[#E0E0E0] mb-4">Concluir {horasMeta} horas de estudo focado exigidas para o dia de hoje.</p>
               
               <div className="space-y-2 mb-6">
                 <div className="flex justify-between font-body font-semibold text-[14px]">
@@ -112,6 +116,33 @@ export default async function MissoesPage() {
                 <span className="text-xs font-bold text-[#4CAF4C] flex items-center gap-1">+5 FOR</span>
               </div>
             </div>
+
+            {/* Quests Dinâmicas dos Blocos de Estudo do Dia */}
+            {diaAtual?.blocos.map((bloco, idx) => (
+              <div key={`bloco-${idx}`} className="bg-[#111] border border-[#2A2A2A] rounded-xl p-5 relative overflow-hidden group transition-all">
+                <div className="absolute top-0 right-0 px-3 py-1 font-title text-sm border-b border-l rounded-bl-lg text-[#E0E0E0] border-[#E0E0E0] bg-[#E0E0E0]/10 z-10">
+                  BLOCO {idx + 1}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 pr-16 mt-2 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-[#E0E0E0]" /> {bloco.nome}
+                </h3>
+                <p className="text-sm text-[#E0E0E0] mb-4">Concluir o bloco de {bloco.tempo} de {bloco.assunto} ({bloco.tipo}).</p>
+                
+                <div className="space-y-2 mb-6">
+                  <div className="flex justify-between font-body font-semibold text-[14px]">
+                    <span className="text-gray-500">Pendente</span>
+                  </div>
+                  <div className="w-full h-2 bg-[#181818] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#E0E0E0] transition-all duration-1000" style={{ width: '0%' }}></div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center border-t border-[#2A2A2A] pt-4">
+                  <span className="text-xs font-body font-semibold text-[#E0E0E0]">RECOMPENSA:</span>
+                  <span className="text-xs font-bold text-[#E0E0E0] flex items-center gap-1">+5 XP</span>
+                </div>
+              </div>
+            ))}
 
           </div>
         </section>
