@@ -67,14 +67,16 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
 
   // MOCK DO CRONOGRAMA DA SEMANA
   const mockCronograma = [
-    { dia: "SEGUNDA", horas: "4h", blocos: [{ nome: "Língua Portuguesa", tempo: "2h" }, { nome: "Direito Penal", tempo: "2h" }], atual: true },
-    { dia: "TERÇA", horas: "4h", blocos: [{ nome: "Direito Constitucional", tempo: "2h" }, { nome: "Direitos Humanos", tempo: "2h" }], atual: false },
-    { dia: "QUARTA", horas: "4h", blocos: [{ nome: "Direito Administrativo", tempo: "2h" }, { nome: "Legislação Específica", tempo: "2h" }], atual: false },
-    { dia: "QUINTA", horas: "4h", blocos: [{ nome: "Ética Profissional", tempo: "2h" }, { nome: "Língua Portuguesa", tempo: "2h" }], atual: false },
-    { dia: "SEXTA", horas: "4h", blocos: [{ nome: "História e Geo. RN", tempo: "2h" }, { nome: "Direitos Humanos", tempo: "2h" }], atual: false },
-    { dia: "SÁBADO", horas: "6h", blocos: [{ nome: "Revisão Geral", tempo: "3h" }, { nome: "Simulado", tempo: "3h" }], atual: false },
-    { dia: "DOMINGO", horas: "5h", blocos: [{ nome: "Correção Simulado", tempo: "2h" }, { nome: "Redação", tempo: "3h" }], atual: false },
+    { dia: "SEGUNDA", horas: "4h", blocos: [{ nome: "Língua Portuguesa", tempo: "2h", assunto: "Compreensão e Interpretação", tipo: "TEORIA" }, { nome: "Direito Penal", tempo: "2h", assunto: "Crimes contra o Patrimônio", tipo: "QUESTÕES" }], atual: true },
+    { dia: "TERÇA", horas: "4h", blocos: [{ nome: "Direito Constitucional", tempo: "2h", assunto: "Direitos Fundamentais", tipo: "TEORIA" }, { nome: "Direitos Humanos", tempo: "2h", assunto: "Pacto de San José", tipo: "QUESTÕES" }], atual: false },
+    { dia: "QUARTA", horas: "4h", blocos: [{ nome: "Direito Administrativo", tempo: "2h", assunto: "Atos Administrativos", tipo: "REVISÃO" }, { nome: "Legislação Específica", tempo: "2h", assunto: "Estatuto da PM", tipo: "TEORIA" }], atual: false },
+    { dia: "QUINTA", horas: "4h", blocos: [{ nome: "Ética Profissional", tempo: "2h", assunto: "Código de Ética", tipo: "TEORIA" }, { nome: "Língua Portuguesa", tempo: "2h", assunto: "Sintaxe", tipo: "QUESTÕES" }], atual: false },
+    { dia: "SEXTA", horas: "4h", blocos: [{ nome: "História e Geo. RN", tempo: "2h", assunto: "Geografia Física do RN", tipo: "TEORIA" }, { nome: "Direitos Humanos", tempo: "2h", assunto: "DUDH", tipo: "QUESTÕES" }], atual: false },
+    { dia: "SÁBADO", horas: "6h", blocos: [{ nome: "Revisão Geral", tempo: "3h", assunto: "Todos os tópicos da semana", tipo: "REVISÃO" }, { nome: "Simulado", tempo: "3h", assunto: "Simulado Inédito", tipo: "PRÁTICA" }], atual: false },
+    { dia: "DOMINGO", horas: "5h", blocos: [{ nome: "Correção Simulado", tempo: "2h", assunto: "Análise de Erros", tipo: "REVISÃO" }, { nome: "Redação", tempo: "3h", assunto: "Tema Atualidades", tipo: "PRÁTICA" }], atual: false },
   ];
+  
+  const diaAtual = mockCronograma.find(d => d.atual);
 
   const handleSaveName = async () => {
     setIsEditingName(false);
@@ -252,26 +254,27 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
             </div>
             
             <div className="p-0">
-              <div className="flex items-center justify-between p-3 border-b border-[#181818] hover:bg-[#181818] transition-colors">
-                <div>
-                  <h4 className="font-title text-[16px] tracking-[1px] text-white">Direito Penal</h4>
-                  <p className="font-body font-semibold text-[16px] text-[#E0E0E0] mt-1">Crimes contra o Patrimônio</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-body font-semibold text-[16px] text-[#4CAF4C] border border-[#2E8B2E] bg-[#1C5C1C]/20 px-2 py-0.5 tracking-[1px]">TEORIA</span>
-                  <button className="bg-[#2E8B2E] text-white font-title text-[15px] tracking-[2px] px-4 py-1 hover:bg-[#4CAF4C] transition-colors border border-[#4CAF4C] rounded">INICIAR</button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-3 hover:bg-[#181818] transition-colors">
-                <div>
-                  <h4 className="font-title text-[16px] tracking-[1px] text-white">Direito Administrativo</h4>
-                  <p className="font-body font-semibold text-[16px] text-[#E0E0E0] mt-1">Atos Administrativos</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-body font-semibold text-[16px] text-[#4A85D4] border border-[#2D5FAA] bg-[#1B3A6B]/20 px-2 py-0.5 tracking-[1px]">QUESTÕES</span>
-                  <button className="bg-[#2E8B2E] text-white font-title text-[15px] tracking-[2px] px-4 py-1 hover:bg-[#4CAF4C] transition-colors border border-[#4CAF4C] rounded">INICIAR</button>
-                </div>
-              </div>
+              {diaAtual?.blocos.map((bloco, idx) => {
+                const isTeoria = bloco.tipo === "TEORIA";
+                const badgeColorClass = isTeoria 
+                  ? "text-[#4CAF4C] border-[#2E8B2E] bg-[#1C5C1C]/20" 
+                  : "text-[#4A85D4] border-[#2D5FAA] bg-[#1B3A6B]/20";
+                
+                return (
+                  <div key={idx} className="flex items-center justify-between p-3 border-b border-[#181818] hover:bg-[#181818] transition-colors">
+                    <div>
+                      <h4 className="font-title text-[16px] tracking-[1px] text-white">{bloco.nome}</h4>
+                      <p className="font-body font-semibold text-[16px] text-[#E0E0E0] mt-1">{bloco.assunto}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`font-body font-semibold text-[16px] border px-2 py-0.5 tracking-[1px] ${badgeColorClass}`}>
+                        {bloco.tipo}
+                      </span>
+                      <button className="bg-[#2E8B2E] text-white font-title text-[15px] tracking-[2px] px-4 py-1 hover:bg-[#4CAF4C] transition-colors border border-[#4CAF4C] rounded">INICIAR</button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
