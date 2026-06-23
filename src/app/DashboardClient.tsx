@@ -22,7 +22,7 @@ import {
   Clock,
   Clock3
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CycleModal } from "@/components/CycleModal";
 import { StudyModal } from "@/components/StudyModal";
 import { EditalCompleto } from "@/components/EditalCompleto";
@@ -55,6 +55,15 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
   const [playerName, setPlayerName] = useState(initialUser?.name || "Lucas");
   const [isEditingName, setIsEditingName] = useState(false);
   const [activeTab, setActiveTab] = useState<'CICLO' | 'EDITAL' | 'CRONOGRAMA' | 'LEISECA'>('CICLO');
+  const [remainingDays, setRemainingDays] = useState(84);
+
+  useEffect(() => {
+    const targetDate = new Date("2026-09-13T00:00:00-03:00");
+    const today = new Date();
+    const diffTime = targetDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    setRemainingDays(diffDays > 0 ? diffDays : 0);
+  }, []);
 
   // MOCK DO CRONOGRAMA DA SEMANA
   const mockCronograma = [
@@ -105,7 +114,7 @@ export default function DashboardClient({ initialUser, subjects }: { initialUser
             <p className="font-body font-semibold text-[#E0E0E0] text-[15px] mt-1">Sua prova objetiva será no dia 13 de Setembro de 2026.</p>
           </div>
           <div className="flex flex-col items-center justify-center bg-[#181818] border border-[#2A2A2A] px-6 py-2 rounded">
-            <span className="font-title text-4xl text-[#FF3366] glow-text-red leading-none">84</span>
+            <span className="font-title text-4xl text-[#FF3366] glow-text-red leading-none">{remainingDays}</span>
             <span className="font-body font-bold text-[12px] tracking-[2px] text-[#FF3366] mt-1">DIAS RESTANTES</span>
           </div>
         </div>
