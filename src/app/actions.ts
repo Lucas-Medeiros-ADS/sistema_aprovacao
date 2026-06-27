@@ -34,6 +34,42 @@ export async function getUserProfile() {
         },
         include: { leiSecaDays: true }
       });
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+
+export async function getUserProfile() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return null;
+  
+  let dbUser = await prisma.user.findUnique({ 
+    where: { id: user.id },
+    include: {
+      leiSecaDays: true
+    }
+  });
+
+  if (!dbUser && user.email) {
+    const existingByEmail = await prisma.user.findUnique({ where: { email: user.email } });
+    if (existingByEmail) {
+      dbUser = await prisma.user.update({
+        where: { email: user.email },
+        data: { id: user.id },
+        include: { leiSecaDays: true }
+      });
+    } else {
+      dbUser = await prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email,
+          name: "Caçador",
+        },
+        include: { leiSecaDays: true }
+      });
     }
   }
 
@@ -41,7 +77,9 @@ export async function getUserProfile() {
 }
 
 export async function getSubjects() {
-  return await prisma.subject.findMany({
+  const user = await getUserProfile();
+  
+  const subjects = await prisma.subject.findMany({
     include: {
       topics: {
         orderBy: { order: "asc" }
@@ -49,6 +87,27 @@ export async function getSubjects() {
     },
     orderBy: { importance: "desc" }
   });
+  
+  if (!user) return subjects;
+  
+  const progress = await prisma.userTopicProgress.findMany({
+    where: { userId: user.id }
+  });
+  
+  const progressMap = new Map(progress.map(p => [p.topicId, p]));
+  
+  return subjects.map(s => ({
+    ...s,
+    topics: s.topics.map(t => {
+      const p = progressMap.get(t.id);
+      return {
+        ...t,
+        isTheoryDone: p ? p.isTheoryDone : false,
+        revisionsCompleted: p ? p.revisionsCompleted : 0,
+        masteryLevel: p ? p.masteryLevel : 1,
+      };
+    })
+  }));
 }
 
 export async function registerStudyMission(formData: FormData) {
@@ -78,9 +137,20 @@ export async function registerStudyMission(formData: FormData) {
 
   // 2. Atualizar o Tópico (se marcado como finalizado)
   if (status === "finished" && topicId) {
-    await prisma.topic.update({
-      where: { id: topicId },
-      data: { isTheoryDone: true, masteryLevel: 2 }
+    await prisma.userTopicProgress.upsert({
+      where: {
+        userId_topicId: {
+          userId: user.id,
+          topicId: topicId
+        }
+      },
+      update: { isTheoryDone: true, masteryLevel: 2 },
+      create: {
+        userId: user.id,
+        topicId: topicId,
+        isTheoryDone: true,
+        masteryLevel: 2
+      }
     });
   }
 
@@ -415,4 +485,48 @@ export async function toggleLeiSecaDay(dayNumber: number, completed: boolean) {
   
   revalidatePath("/");
   return result;
+}
+
+export async function toggleTopicTheory(topicId: string, isDone: boolean) {
+  const user = await getUserProfile();
+  if (!user) return { success: false, message: "Não logado" };
+
+  await prisma.userTopicProgress.upsert({
+    where: {
+      userId_topicId: {
+        userId: user.id,
+        topicId: topicId
+      }
+    },
+    update: { isTheoryDone: isDone },
+    create: {
+      userId: user.id,
+      topicId: topicId,
+      isTheoryDone: isDone
+    }
+  });
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function setTopicRevisions(topicId: string, revisionsCount: number) {
+  const user = await getUserProfile();
+  if (!user) return { success: false, message: "Não logado" };
+
+  await prisma.userTopicProgress.upsert({
+    where: {
+      userId_topicId: {
+        userId: user.id,
+        topicId: topicId
+      }
+    },
+    update: { revisionsCompleted: revisionsCount },
+    create: {
+      userId: user.id,
+      topicId: topicId,
+      revisionsCompleted: revisionsCount
+    }
+  });
+  revalidatePath("/");
+  return { success: true };
 }

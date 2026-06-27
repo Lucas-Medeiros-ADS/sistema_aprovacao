@@ -41,6 +41,7 @@ model User {
   // Relações
   missionLogs   MissionLog[]
   leiSecaDays   LeiSecaDay[]
+  topicProgress UserTopicProgress[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -80,11 +81,24 @@ model Topic {
   title       String
   order       Int      @default(0)
   
-  isTheoryDone Boolean @default(false)
-  masteryLevel Int     @default(1) // 1 (Iniciante) a 3 (Avançado)
-  
   subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   missionLogs MissionLog[]
+  userProgress UserTopicProgress[]
+}
+
+model UserTopicProgress {
+  id          String   @id @default(uuid())
+  userId      String
+  topicId     String
+  
+  isTheoryDone Boolean @default(false)
+  revisionsCompleted Int @default(0) // 0 to 6
+  masteryLevel Int     @default(1) // 1 (Iniciante) a 3 (Avançado)
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, topicId])
 }
 
 // -----------------------------------------------------------------------------
