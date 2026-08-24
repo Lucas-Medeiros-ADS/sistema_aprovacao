@@ -55,9 +55,16 @@ export async function getExamQuestionsForPlay(examId: string) {
   const user = await getUserProfile();
   if (!user) return [];
 
-  return await prisma.question.findMany({
+  const questions = await prisma.question.findMany({
     where: { examId },
-    orderBy: { id: "asc" }
+  });
+
+  return questions.sort((a, b) => {
+    const matchA = a.text.match(/Questão\s+(\d+)/i);
+    const matchB = b.text.match(/Questão\s+(\d+)/i);
+    const numA = matchA ? parseInt(matchA[1]) : 0;
+    const numB = matchB ? parseInt(matchB[1]) : 0;
+    return numA - numB;
   });
 }
 

@@ -9,6 +9,20 @@ import clsx from "clsx";
 type ExamType = NonNullable<Awaited<ReturnType<typeof getExamDetails>>>;
 type QuestionType = Awaited<ReturnType<typeof getExamQuestionsForPlay>>[0];
 
+const getMateriaByQuestionNumber = (num: number) => {
+  if (num >= 1 && num <= 15) return "Língua Portuguesa";
+  if (num >= 16 && num <= 20) return "História e Aspectos do RN";
+  if (num >= 21 && num <= 25) return "Ética no Serviço Público";
+  if (num >= 26 && num <= 35) return "Direito Constitucional";
+  if (num >= 36 && num <= 45) return "Direito Administrativo";
+  if (num >= 46 && num <= 55) return "Direitos Humanos";
+  if (num >= 56 && num <= 70) return "Legislação Execução Penal";
+  if (num >= 71 && num <= 90) return "Legislação Específica";
+  if (num >= 91 && num <= 95) return "Direito Penal";
+  if (num >= 96 && num <= 100) return "Direito Processual Penal";
+  return "Conhecimentos Gerais";
+};
+
 export default function ExamPlayPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const searchParams = useSearchParams();
@@ -61,6 +75,10 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   const currentQ = questions[currentIdx];
   const isLast = currentIdx === questions.length - 1;
   const isFirst = currentIdx === 0;
+
+  const numMatch = currentQ?.text.match(/Questão\s+(\d+)/i);
+  const qNum = numMatch ? parseInt(numMatch[1]) : currentIdx + 1;
+  const materia = getMateriaByQuestionNumber(qNum);
 
   // options can be a string array or object array. Let's assume it's string[]
   const optionsList: string[] = (currentQ.options as any) || [];
@@ -125,9 +143,12 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
         <div className="w-full max-w-[800px] space-y-8 pb-32 pt-4">
           
           <div className="bg-[#111] border border-[#2A2A2A] rounded-xl p-6 md:p-8 shadow-xl">
-            {/* Texto da Questão */}
+            {/* Badge de Matéria e Texto da Questão */}
+            <div className="mb-4 inline-block px-3 py-1 bg-[#2D5FAA]/20 border border-[#2D5FAA]/50 rounded text-[#4A85D4] text-xs font-semibold tracking-wider">
+              {materia.toUpperCase()}
+            </div>
             <div 
-              className="text-lg md:text-xl text-gray-200 leading-relaxed mb-8 prose prose-invert max-w-none"
+              className="text-base md:text-lg text-gray-200 leading-relaxed mb-8 prose prose-invert max-w-none break-words"
               dangerouslySetInnerHTML={{ __html: currentQ.text.replace(/\n/g, "<br/>") }}
             />
 
@@ -158,7 +179,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
                     )}>
                       {isSelected ? <Check className="w-5 h-5" /> : label}
                     </div>
-                    <div className="pt-1">{opt}</div>
+                    <div className="pt-1 flex-1 break-words">{opt}</div>
                   </button>
                 );
               })}
