@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { getExamDetails, getExamQuestionsForPlay, submitExamAnswers } from "../actions";
+import { getExamDetails, getExamQuestionsForPlay, submitExamAnswers } from "../../actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Check, Target, Loader2 } from "lucide-react";
 import clsx from "clsx";

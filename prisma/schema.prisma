@@ -6,192 +6,141 @@ datasource db {
   provider = "postgresql"
 }
 
-// -----------------------------------------------------------------------------
-// SISTEMA DE STATUS DO JOGADOR (CAÇADOR)
-// -----------------------------------------------------------------------------
 model User {
-  id            String   @id // Matches Supabase Auth UUID
-  email         String   @unique
-  name          String   @default("Caçador")
-  whatsapp      String?  // Número de telefone para notificações
-  
-  // Status Solo Leveling
-  level         Int      @default(1)
-  xp            Int      @default(0)
-  coins         Int      @default(0)
-  classRole     String   @default("Recruta")
-  
-  // Onboarding (Character Creation)
-  gender        String?  // Masculino, Feminino
+  id            String              @id
+  email         String              @unique
+  name          String              @default("Caçador")
+  whatsapp      String?
+  level         Int                 @default(1)
+  xp            Int                 @default(0)
+  coins         Int                 @default(0)
+  classRole     String              @default("Recruta")
+  gender        String?
   age           Int?
-  policeClass   String?  // PF, PRF, PM, PC, PP, GCM
-  isPCD         Boolean  @default(false)
-  race          String?  // Branco, Preto, Pardo, Indígena, Amarelo
-  
-  // Atributos do Radar
-  inteligencia  Int      @default(0) // Ganho via Acertos TEC/QC
-  forca         Int      @default(0) // Ganho via TAF
-  disciplina    Int      @default(0) // Ganho via constância (Dias Vivos)
-  espirito      Int      @default(0) // Ganho via Tracker Espiritual
-  
-  // Tracker de Constância
-  streakDays    Int      @default(0) // Dias Vivos
-  spiritualType String   @default("Católico") // "Católico" (Missa) ou "Evangélico" (Culto)
-  
-  // Relações
-  missionLogs   MissionLog[]
-  leiSecaDays   LeiSecaDay[]
-  topicProgress UserTopicProgress[]
+  policeClass   String?
+  isPCD         Boolean             @default(false)
+  race          String?
+  inteligencia  Int                 @default(0)
+  forca         Int                 @default(0)
+  disciplina    Int                 @default(0)
+  espirito      Int                 @default(0)
+  streakDays    Int                 @default(0)
+  spiritualType String              @default("Católico")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
   examAttempts  ExamAttempt[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  leiSecaDays   LeiSecaDay[]
+  missionLogs   MissionLog[]
+  topicProgress UserTopicProgress[]
 }
 
-// -----------------------------------------------------------------------------
-// SISTEMA LEI SECA (60 DIAS)
-// -----------------------------------------------------------------------------
 model LeiSecaDay {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
   dayNumber   Int
-  completed   Boolean  @default(false)
+  completed   Boolean   @default(false)
   completedAt DateTime?
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dayNumber])
 }
 
-// -----------------------------------------------------------------------------
-// SISTEMA DO EDITAL (Manual de Sobrevivência)
-// -----------------------------------------------------------------------------
 model Subject {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  colorHex    String   @default("#00E5FF") // Azul Gelo (padrão)
-  importance  Int      @default(1) // Peso na prova
-  
-  topics      Topic[]
+  colorHex    String       @default("#00E5FF")
+  importance  Int          @default(1)
   missionLogs MissionLog[]
+  topics      Topic[]
 }
 
 model Topic {
-  id          String   @id @default(uuid())
-  subjectId   String
-  title       String
-  order       Int      @default(0)
-  
-  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  missionLogs MissionLog[]
+  id           String              @id @default(uuid())
+  subjectId    String
+  title        String
+  order        Int                 @default(0)
+  missionLogs  MissionLog[]
+  subject      Subject             @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   userProgress UserTopicProgress[]
 }
 
 model UserTopicProgress {
-  id          String   @id @default(uuid())
-  userId      String
-  topicId     String
-  
-  isTheoryDone Boolean @default(false)
-  revisionsCompleted Int @default(0) // 0 to 6
-  masteryLevel Int     @default(1) // 1 (Iniciante) a 3 (Avançado)
-  
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  
+  id                 String  @id @default(uuid())
+  userId             String
+  topicId            String
+  isTheoryDone       Boolean @default(false)
+  revisionsCompleted Int     @default(0)
+  masteryLevel       Int     @default(1)
+  topic              Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, topicId])
 }
 
-// -----------------------------------------------------------------------------
-// SISTEMA DE COMBATE (Registro de Missões Diárias)
-// -----------------------------------------------------------------------------
 model MissionLog {
-  id          String   @id @default(uuid())
-  userId      String
-  
-  // TIPO DA MISSÃO: "ESTUDO", "TAF" ou "ESPIRITO"
-  missionType String
-  
-  // --------------------------------------------------
-  // A. Inteligência (Estudo TEC/QC)
-  // --------------------------------------------------
-  subjectId   String?
-  topicId     String?
-  category    String?  // "Teoria", "Revisão", "Questões"
-  durationMin Int?     // Tempo líquido
-  questionsDone Int?   @default(0)
-  questionsRight Int?  @default(0)
-  
-  // --------------------------------------------------
-  // B. Força (TAF)
-  // --------------------------------------------------
+  id                String   @id @default(uuid())
+  userId            String
+  missionType       String
+  subjectId         String?
+  topicId           String?
+  category          String?
+  durationMin       Int?
+  questionsDone     Int?     @default(0)
+  questionsRight    Int?     @default(0)
   runDistanceMeters Int?
   swimTimeSeconds   Int?
   pullUpsCount      Int?
-  
-  // --------------------------------------------------
-  // C. Espírito (Missa/Culto)
-  // --------------------------------------------------
-  spiritualDone     Boolean @default(false)
-  
-  date        DateTime @default(now())
-  notes       String?  @db.Text
-  
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject     Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  topic       Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  spiritualDone     Boolean  @default(false)
+  date              DateTime @default(now())
+  notes             String?
+  subject           Subject? @relation(fields: [subjectId], references: [id])
+  topic             Topic?   @relation(fields: [topicId], references: [id])
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// -----------------------------------------------------------------------------
-// SISTEMA DE SIMULADOS
-// -----------------------------------------------------------------------------
 model Exam {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
-  provider    String   // "Missão", "Caveira", "DSO", "Estratégia", etc.
+  provider    String
   description String?
-  createdAt   DateTime @default(now())
-  
-  questions   Question[]
+  createdAt   DateTime      @default(now())
   attempts    ExamAttempt[]
+  questions   Question[]
 }
 
 model Question {
-  id            String   @id @default(uuid())
+  id            String       @id @default(uuid())
   examId        String
-  text          String   @db.Text
-  options       Json     // Array of options
-  correctAnswer String   // O valor da alternativa correta
-  explanation   String?  @db.Text
-  
-  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  text          String
+  options       Json
+  correctAnswer String
+  explanation   String?
+  exam          Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
   userAnswers   UserAnswer[]
 }
 
 model ExamAttempt {
-  id          String   @id @default(uuid())
-  userId      String
-  examId      String
-  score       Int      @default(0) // Quantidade de acertos
-  total       Int      @default(0) // Total de questões no simulado
-  finishedAt  DateTime?
-  createdAt   DateTime @default(now())
-  
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  answers     UserAnswer[]
+  id         String       @id @default(uuid())
+  userId     String
+  examId     String
+  score      Int          @default(0)
+  total      Int          @default(0)
+  finishedAt DateTime?
+  createdAt  DateTime     @default(now())
+  exam       Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers    UserAnswer[]
 }
 
 model UserAnswer {
-  id          String   @id @default(uuid())
-  attemptId   String
-  questionId  String
-  answer      String   // A resposta selecionada
-  isCorrect   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  
-  attempt     ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
-  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
+  id         String      @id @default(uuid())
+  attemptId  String
+  questionId String
+  answer     String
+  isCorrect  Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  attempt    ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@unique([attemptId, questionId])
 }

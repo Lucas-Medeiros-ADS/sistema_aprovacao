@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { getExamResult } from "../actions";
+import { getExamResult } from "../../actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Header } from "@/components/Header";
 import { ChevronLeft, Target, CheckCircle2, XCircle, Trophy } from "lucide-react";
