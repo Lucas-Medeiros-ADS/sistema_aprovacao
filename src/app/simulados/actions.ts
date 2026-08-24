@@ -40,6 +40,18 @@ export async function startExamAttempt(examId: string) {
   
   if (!exam) throw new Error("Simulado não encontrado");
 
+  const existingAttempt = await prisma.examAttempt.findFirst({
+    where: {
+      userId: user.id,
+      examId: exam.id,
+      finishedAt: null
+    }
+  });
+
+  if (existingAttempt) {
+    return existingAttempt.id;
+  }
+
   const attempt = await prisma.examAttempt.create({
     data: {
       userId: user.id,
@@ -122,6 +134,54 @@ export async function submitExamAnswers(attemptId: string, answers: Record<strin
 
   revalidatePath("/simulados");
   return attempt.id;
+}
+
+export async function getExamProgress(attemptId: string) {
+  const user = await getUserProfile();
+  if (!user) return {};
+
+  const userAnswers = await prisma.userAnswer.findMany({
+    where: { attemptId }
+  });
+
+  const answersMap: Record<string, string> = {};
+  for (const ua of userAnswers) {
+    answersMap[ua.questionId] = ua.answer;
+  }
+  return answersMap;
+}
+
+export async function saveExamProgress(attemptId: string, answers: Record<string, string>) {
+  const user = await getUserProfile();
+  if (!user) return;
+
+  const attempt = await prisma.examAttempt.findUnique({
+    where: { id: attemptId },
+    include: { exam: { include: { questions: true } } }
+  });
+
+  if (!attempt) return;
+
+  const userAnswersData = [];
+  for (const question of attempt.exam.questions) {
+    const userAnswer = answers[question.id];
+    if (userAnswer) {
+      const isCorrect = userAnswer === question.correctAnswer;
+      userAnswersData.push({
+        attemptId: attempt.id,
+        questionId: question.id,
+        answer: userAnswer,
+        isCorrect
+      });
+    }
+  }
+
+  // To avoid conflict on unique constraint, delete all existing and re-insert
+  // This is simpler since Prisma createMany doesn't support onConflict easily in Postgres
+  await prisma.$transaction([
+    prisma.userAnswer.deleteMany({ where: { attemptId } }),
+    ...(userAnswersData.length > 0 ? [prisma.userAnswer.createMany({ data: userAnswersData })] : [])
+  ]);
 }
 
 export async function getExamResult(attemptId: string) {

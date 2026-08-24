@@ -88,13 +88,6 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
 
-              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 flex gap-3 mb-12">
-                <AlertCircle className="w-6 h-6 text-yellow-500 flex-shrink-0" />
-                <p className="text-sm text-yellow-500/90 font-medium">
-                  Atenção: Ao iniciar o simulado, suas respostas só serão salvas quando você finalizar. Não feche a aba durante a resolução.
-                </p>
-              </div>
-
               <button 
                 onClick={handleStart}
                 disabled={starting || exam._count.questions === 0}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { getExamDetails, getExamQuestionsForPlay, submitExamAnswers } from "../../actions";
+import { getExamDetails, getExamQuestionsForPlay, submitExamAnswers, getExamProgress, saveExamProgress } from "../../actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Check, Target, Loader2 } from "lucide-react";
 import clsx from "clsx";
@@ -45,10 +45,14 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
 
     Promise.all([
       getExamDetails(resolvedParams.id),
-      getExamQuestionsForPlay(resolvedParams.id)
-    ]).then(([examData, questionsData]) => {
+      getExamQuestionsForPlay(resolvedParams.id),
+      getExamProgress(attemptId)
+    ]).then(([examData, questionsData, progressData]) => {
       setExam(examData);
       setQuestions(questionsData);
+      if (progressData) {
+        setAnswers(progressData);
+      }
       setLoading(false);
     });
   }, [resolvedParams.id, attemptId, router]);
@@ -84,7 +88,13 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   const optionsList: string[] = (currentQ.options as any) || [];
 
   const handleSelect = (val: string) => {
-    setAnswers(prev => ({ ...prev, [currentQ.id]: val }));
+    setAnswers(prev => {
+      const newAnswers = { ...prev, [currentQ.id]: val };
+      if (attemptId) {
+        saveExamProgress(attemptId, newAnswers).catch(console.error);
+      }
+      return newAnswers;
+    });
   };
 
   const handleNext = () => {
