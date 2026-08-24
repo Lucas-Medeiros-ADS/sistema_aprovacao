@@ -34,7 +34,9 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true);
   
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({}); // Resolved answers
+  const [draftAnswers, setDraftAnswers] = useState<Record<string, string>>({}); // Selected but not yet resolved
+  const [crossedOut, setCrossedOut] = useState<Record<string, number[]>>({}); // Indices of crossed out options per question
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -87,9 +89,31 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   // options can be a string array or object array. Let's assume it's string[]
   const optionsList: string[] = (currentQ.options as any) || [];
 
+  const isResolved = !!answers[currentQ.id];
+  const userAnswer = answers[currentQ.id];
+
   const handleSelect = (val: string) => {
+    if (isResolved) return; // Locked
+    setDraftAnswers(prev => ({ ...prev, [currentQ.id]: val }));
+  };
+
+  const handleDoubleClick = (idx: number) => {
+    if (isResolved) return;
+    setCrossedOut(prev => {
+      const current = prev[currentQ.id] || [];
+      if (current.includes(idx)) {
+        return { ...prev, [currentQ.id]: current.filter(i => i !== idx) };
+      }
+      return { ...prev, [currentQ.id]: [...current, idx] };
+    });
+  };
+
+  const handleResolve = () => {
+    const draft = draftAnswers[currentQ.id];
+    if (!draft) return;
+    
     setAnswers(prev => {
-      const newAnswers = { ...prev, [currentQ.id]: val };
+      const newAnswers = { ...prev, [currentQ.id]: draft };
       if (attemptId) {
         saveExamProgress(attemptId, newAnswers).catch(console.error);
       }
@@ -165,34 +189,96 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
             {/* Alternativas */}
             <div className="space-y-3">
               {optionsList.map((opt, idx) => {
-                const isSelected = answers[currentQ.id] === opt || answers[currentQ.id] === String(idx);
-                // The value to save can be the option text itself or index. We will save the option text.
                 const valToSave = opt;
-                
                 const labels = ["A", "B", "C", "D", "E"];
                 const label = labels[idx] || (idx+1).toString();
+                
+                const isDraftSelected = draftAnswers[currentQ.id] === opt || draftAnswers[currentQ.id] === String(idx);
+                const isCrossed = (crossedOut[currentQ.id] || []).includes(idx);
+                const isCorrectOption = currentQ.correctAnswer === opt || currentQ.correctAnswer === String(idx);
+                const isUserChoice = userAnswer === opt || userAnswer === String(idx);
+
+                let optionStyle = "bg-[#1A1A1A] border-[#2A2A2A] text-gray-400 hover:border-gray-500 hover:bg-[#222]";
+                let markerStyle = "border-gray-600";
+                
+                if (isResolved) {
+                  if (isCorrectOption) {
+                    optionStyle = "bg-[#113320] border-[#22C55E] text-[#4ADE80]";
+                    markerStyle = "border-[#22C55E] bg-[#22C55E] text-black";
+                  } else if (isUserChoice && !isCorrectOption) {
+                    optionStyle = "bg-[#3B1A1A] border-[#EF4444] text-[#F87171]";
+                    markerStyle = "border-[#EF4444] bg-[#EF4444] text-white";
+                  } else {
+                    optionStyle = "bg-[#1A1A1A] border-[#2A2A2A] text-gray-600 opacity-50";
+                  }
+                } else {
+                  if (isDraftSelected) {
+                    optionStyle = "bg-[#00E5FF]/10 border-[#00E5FF] text-white";
+                    markerStyle = "border-[#00E5FF] bg-[#00E5FF] text-black";
+                  } else if (isCrossed) {
+                    optionStyle = "bg-[#141414] border-[#1f1f1f] text-gray-600 line-through opacity-60";
+                    markerStyle = "border-gray-700 opacity-50";
+                  }
+                }
 
                 return (
                   <button
                     key={idx}
                     onClick={() => handleSelect(valToSave)}
+                    onDoubleClick={() => handleDoubleClick(idx)}
+                    disabled={isResolved}
                     className={clsx(
-                      "w-full text-left p-4 rounded-lg border transition-all flex gap-4",
-                      isSelected 
-                        ? "bg-[#00E5FF]/10 border-[#00E5FF] text-white" 
-                        : "bg-[#1A1A1A] border-[#2A2A2A] text-gray-400 hover:border-gray-500 hover:bg-[#222]"
+                      "w-full text-left p-4 rounded-lg border transition-all flex gap-4 disabled:cursor-default select-none",
+                      optionStyle
                     )}
                   >
                     <div className={clsx(
                       "flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center text-sm font-bold",
-                      isSelected ? "border-[#00E5FF] bg-[#00E5FF] text-black" : "border-gray-600"
+                      markerStyle
                     )}>
-                      {isSelected ? <Check className="w-5 h-5" /> : label}
+                      {(!isResolved && isDraftSelected) || (isResolved && isCorrectOption) || (isResolved && isUserChoice && !isCorrectOption) ? <Check className="w-5 h-5" /> : label}
                     </div>
                     <div className="pt-1 flex-1 break-words">{opt.replace(/^\([A-E]\)\s*/i, '')}</div>
                   </button>
                 );
               })}
+            </div>
+
+            {/* Ações / Feedback da Questão */}
+            <div className="mt-8">
+              {!isResolved ? (
+                <button
+                  onClick={handleResolve}
+                  disabled={!draftAnswers[currentQ.id]}
+                  className="bg-[#2D5FAA] hover:bg-[#3A75CC] disabled:bg-[#1A2A40] disabled:text-gray-500 text-white font-title tracking-[1px] px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  RESOLVER QUESTÃO
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 text-lg font-medium">
+                  {currentQ.correctAnswer === userAnswer || currentQ.correctAnswer === String(optionsList.findIndex(o => o === userAnswer)) ? (
+                    <>
+                      <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-black flex-shrink-0">
+                        <Check className="w-6 h-6" />
+                      </div>
+                      <span className="text-green-500">Você acertou! Boa!</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white flex-shrink-0 font-bold text-xl leading-none pt-1">
+                        ×
+                      </div>
+                      <span className="text-red-500">
+                        Você errou! Gabarito: {(() => {
+                          const idx = optionsList.findIndex(o => o === currentQ.correctAnswer || String(optionsList.indexOf(o)) === currentQ.correctAnswer);
+                          const labels = ["A", "B", "C", "D", "E"];
+                          return labels[idx] || currentQ.correctAnswer;
+                        })()}.
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
