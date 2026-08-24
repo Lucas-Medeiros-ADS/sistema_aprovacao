@@ -149,7 +149,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
             </div>
             <div 
               className="text-base md:text-lg text-gray-200 leading-relaxed mb-8 prose prose-invert max-w-none break-words"
-              dangerouslySetInnerHTML={{ __html: currentQ.text.replace(/\n/g, "<br/>") }}
+              dangerouslySetInnerHTML={{ __html: currentQ.text.replace(/^Questão\s+\d+\s*[-–—]?\s*/i, '').replace(/\n/g, "<br/>") }}
             />
 
             {/* Alternativas */}
@@ -179,7 +179,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
                     )}>
                       {isSelected ? <Check className="w-5 h-5" /> : label}
                     </div>
-                    <div className="pt-1 flex-1 break-words">{opt}</div>
+                    <div className="pt-1 flex-1 break-words">{opt.replace(/^\([A-E]\)\s*/i, '')}</div>
                   </button>
                 );
               })}
@@ -190,7 +190,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
       </div>
 
       {/* Barra de Navegação Inferior */}
-      <footer className="h-20 border-t border-[#2A2A2A] bg-[#111] flex items-center justify-between px-4 md:px-8 absolute bottom-0 w-full flex-shrink-0">
+      <footer className="h-20 border-t border-[#2A2A2A] bg-[#111] flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-10 relative">
         <button
           onClick={handlePrev}
           disabled={isFirst}
