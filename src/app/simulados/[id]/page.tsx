@@ -16,6 +16,7 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
   const [exam, setExam] = useState<ExamType | null>(null);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [mode, setMode] = useState<"simulado" | "banco">("simulado");
 
   useEffect(() => {
     getExamDetails(resolvedParams.id).then(data => {
@@ -29,7 +30,7 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
     setStarting(true);
     try {
       const attemptId = await startExamAttempt(exam.id);
-      router.push(`/simulados/${exam.id}/play?attempt=${attemptId}`);
+      router.push(`/simulados/${exam.id}/play?attempt=${attemptId}&mode=${mode}`);
     } catch (e) {
       alert("Erro ao iniciar simulado.");
       setStarting(false);
@@ -85,6 +86,35 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
                   <div className="text-2xl font-title text-white flex items-center justify-center gap-2">
                     <Clock className="w-5 h-5 text-gray-400" /> --:--
                   </div>
+                </div>
+              </div>
+
+              <div className="mb-10 space-y-4">
+                <p className="text-gray-400 font-semibold text-sm">ESCOLHA O MODO DE RESOLUÇÃO:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className={`cursor-pointer p-4 rounded-lg border ${mode === "simulado" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${mode === "simulado" ? "border-[#00E5FF]" : "border-gray-500"}`}>
+                        {mode === "simulado" && <div className="w-2.5 h-2.5 bg-[#00E5FF] rounded-full" />}
+                      </div>
+                      <span className={`font-title tracking-wider ${mode === "simulado" ? "text-[#00E5FF]" : "text-gray-300"}`}>MODO SIMULADO</span>
+                    </div>
+                    <p className="text-gray-500 text-xs pl-8 leading-relaxed">
+                      Responda todas as questões e veja o gabarito apenas no final da prova.
+                    </p>
+                  </label>
+                  
+                  <label className={`cursor-pointer p-4 rounded-lg border ${mode === "banco" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${mode === "banco" ? "border-[#00E5FF]" : "border-gray-500"}`}>
+                        {mode === "banco" && <div className="w-2.5 h-2.5 bg-[#00E5FF] rounded-full" />}
+                      </div>
+                      <span className={`font-title tracking-wider ${mode === "banco" ? "text-[#00E5FF]" : "text-gray-300"}`}>BANCO DE QUESTÕES</span>
+                    </div>
+                    <p className="text-gray-500 text-xs pl-8 leading-relaxed">
+                      Descubra se acertou ou errou logo após resolver cada questão individualmente.
+                    </p>
+                  </label>
                 </div>
               </div>
 

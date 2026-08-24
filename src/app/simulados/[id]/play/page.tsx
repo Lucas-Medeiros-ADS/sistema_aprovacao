@@ -27,6 +27,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   const resolvedParams = use(params);
   const searchParams = useSearchParams();
   const attemptId = searchParams.get("attempt");
+  const mode = searchParams.get("mode") || "simulado";
   const router = useRouter();
 
   const [exam, setExam] = useState<ExamType | null>(null);
@@ -89,12 +90,23 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
   // options can be a string array or object array. Let's assume it's string[]
   const optionsList: string[] = (currentQ.options as any) || [];
 
-  const isResolved = !!answers[currentQ.id];
+  const isResolved = mode === "banco" && !!answers[currentQ.id];
   const userAnswer = answers[currentQ.id];
 
   const handleSelect = (val: string) => {
     if (isResolved) return; // Locked
-    setDraftAnswers(prev => ({ ...prev, [currentQ.id]: val }));
+    
+    if (mode === "simulado") {
+      setAnswers(prev => {
+        const newAnswers = { ...prev, [currentQ.id]: val };
+        if (attemptId) {
+          saveExamProgress(attemptId, newAnswers).catch(console.error);
+        }
+        return newAnswers;
+      });
+    } else {
+      setDraftAnswers(prev => ({ ...prev, [currentQ.id]: val }));
+    }
   };
 
   const handleDoubleClick = (idx: number) => {
@@ -193,7 +205,8 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
                 const labels = ["A", "B", "C", "D", "E"];
                 const label = labels[idx] || (idx+1).toString();
                 
-                const isDraftSelected = draftAnswers[currentQ.id] === opt || draftAnswers[currentQ.id] === String(idx);
+                const currentSelection = mode === "simulado" ? answers[currentQ.id] : draftAnswers[currentQ.id];
+                const isDraftSelected = currentSelection === opt || currentSelection === String(idx);
                 const isCrossed = (crossedOut[currentQ.id] || []).includes(idx);
                 const isCorrectOption = currentQ.correctAnswer === opt || currentQ.correctAnswer === String(idx);
                 const isUserChoice = userAnswer === opt || userAnswer === String(idx);
@@ -245,41 +258,43 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
             </div>
 
             {/* Ações / Feedback da Questão */}
-            <div className="mt-8">
-              {!isResolved ? (
-                <button
-                  onClick={handleResolve}
-                  disabled={!draftAnswers[currentQ.id]}
-                  className="bg-[#2D5FAA] hover:bg-[#3A75CC] disabled:bg-[#1A2A40] disabled:text-gray-500 text-white font-title tracking-[1px] px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
-                >
-                  RESOLVER QUESTÃO
-                </button>
-              ) : (
-                <div className="flex items-center gap-2 text-lg font-medium">
-                  {currentQ.correctAnswer === userAnswer || currentQ.correctAnswer === String(optionsList.findIndex(o => o === userAnswer)) ? (
-                    <>
-                      <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-black flex-shrink-0">
-                        <Check className="w-6 h-6" />
-                      </div>
-                      <span className="text-green-500">Você acertou! Boa!</span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white flex-shrink-0 font-bold text-xl leading-none pt-1">
-                        ×
-                      </div>
-                      <span className="text-red-500">
-                        Você errou! Gabarito: {(() => {
-                          const idx = optionsList.findIndex(o => o === currentQ.correctAnswer || String(optionsList.indexOf(o)) === currentQ.correctAnswer);
-                          const labels = ["A", "B", "C", "D", "E"];
-                          return labels[idx] || currentQ.correctAnswer;
-                        })()}.
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+            {mode === "banco" && (
+              <div className="mt-8">
+                {!isResolved ? (
+                  <button
+                    onClick={handleResolve}
+                    disabled={!draftAnswers[currentQ.id]}
+                    className="bg-[#2D5FAA] hover:bg-[#3A75CC] disabled:bg-[#1A2A40] disabled:text-gray-500 text-white font-title tracking-[1px] px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    RESOLVER QUESTÃO
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2 text-lg font-medium">
+                    {currentQ.correctAnswer === userAnswer || currentQ.correctAnswer === String(optionsList.findIndex(o => o === userAnswer)) ? (
+                      <>
+                        <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-black flex-shrink-0">
+                          <Check className="w-6 h-6" />
+                        </div>
+                        <span className="text-green-500">Você acertou! Boa!</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white flex-shrink-0 font-bold text-xl leading-none pt-1">
+                          ×
+                        </div>
+                        <span className="text-red-500">
+                          Você errou! Gabarito: {(() => {
+                            const idx = optionsList.findIndex(o => o === currentQ.correctAnswer || String(optionsList.indexOf(o)) === currentQ.correctAnswer);
+                            const labels = ["A", "B", "C", "D", "E"];
+                            return labels[idx] || currentQ.correctAnswer;
+                          })()}.
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
         </div>
@@ -298,7 +313,7 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
         {/* Grid de Navegação Rápida (Desktop) */}
         <div className="hidden md:flex gap-1 overflow-x-auto max-w-[50%] no-scrollbar px-4">
           {questions.map((q, idx) => {
-            const isAnswered = !!answers[q.id];
+            const isAnswered = mode === "simulado" ? !!answers[q.id] : !!answers[q.id] || !!draftAnswers[q.id];
             const isCurrent = currentIdx === idx;
             return (
               <button
