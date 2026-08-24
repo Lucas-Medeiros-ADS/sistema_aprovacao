@@ -112,6 +112,7 @@ model Question {
   id            String       @id @default(uuid())
   examId        String
   text          String
+  associatedText String?
   options       Json
   correctAnswer String
   explanation   String?

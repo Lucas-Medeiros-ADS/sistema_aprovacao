@@ -193,6 +193,20 @@ export default function ExamPlayPage({ params }: { params: Promise<{ id: string 
             <div className="mb-4 inline-block px-3 py-1 bg-[#2D5FAA]/20 border border-[#2D5FAA]/50 rounded text-[#4A85D4] text-xs font-semibold tracking-wider">
               {materia.toUpperCase()}
             </div>
+
+            {currentQ.associatedText && (
+              <details className="mb-6 group bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg">
+                <summary className="cursor-pointer font-semibold p-4 text-[#00E5FF] list-none flex justify-between items-center">
+                  Texto
+                  <span className="transition group-open:rotate-180">▼</span>
+                </summary>
+                <div 
+                  className="p-4 pt-0 text-gray-300 text-sm md:text-base leading-relaxed whitespace-pre-wrap border-t border-[#2A2A2A] mt-2"
+                  dangerouslySetInnerHTML={{ __html: currentQ.associatedText }}
+                />
+              </details>
+            )}
+
             <div 
               className="text-base md:text-lg text-gray-200 leading-relaxed mb-8 prose prose-invert max-w-none break-words"
               dangerouslySetInnerHTML={{ __html: currentQ.text.replace(/^Questão\s+\d+\s*[-–—]?\s*/i, '').replace(/\n/g, "<br/>") }}
