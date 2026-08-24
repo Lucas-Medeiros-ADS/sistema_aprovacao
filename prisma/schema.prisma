@@ -42,6 +42,7 @@ model User {
   missionLogs   MissionLog[]
   leiSecaDays   LeiSecaDay[]
   topicProgress UserTopicProgress[]
+  examAttempts  ExamAttempt[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -139,4 +140,58 @@ model MissionLog {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject     Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   topic       Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+}
+
+// -----------------------------------------------------------------------------
+// SISTEMA DE SIMULADOS
+// -----------------------------------------------------------------------------
+model Exam {
+  id          String   @id @default(uuid())
+  title       String
+  provider    String   // "Missão", "Caveira", "DSO", "Estratégia", etc.
+  description String?
+  createdAt   DateTime @default(now())
+  
+  questions   Question[]
+  attempts    ExamAttempt[]
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  examId        String
+  text          String   @db.Text
+  options       Json     // Array of options
+  correctAnswer String   // O valor da alternativa correta
+  explanation   String?  @db.Text
+  
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  userAnswers   UserAnswer[]
+}
+
+model ExamAttempt {
+  id          String   @id @default(uuid())
+  userId      String
+  examId      String
+  score       Int      @default(0) // Quantidade de acertos
+  total       Int      @default(0) // Total de questões no simulado
+  finishedAt  DateTime?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers     UserAnswer[]
+}
+
+model UserAnswer {
+  id          String   @id @default(uuid())
+  attemptId   String
+  questionId  String
+  answer      String   // A resposta selecionada
+  isCorrect   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  attempt     ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@unique([attemptId, questionId])
 }
