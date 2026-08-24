@@ -92,7 +92,10 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
               <div className="mb-10 space-y-4">
                 <p className="text-gray-400 font-semibold text-sm">ESCOLHA O MODO DE RESOLUÇÃO:</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className={`cursor-pointer p-4 rounded-lg border ${mode === "simulado" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}>
+                  <label 
+                    onClick={() => setMode("simulado")}
+                    className={`cursor-pointer p-4 rounded-lg border ${mode === "simulado" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}
+                  >
                     <div className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${mode === "simulado" ? "border-[#00E5FF]" : "border-gray-500"}`}>
                         {mode === "simulado" && <div className="w-2.5 h-2.5 bg-[#00E5FF] rounded-full" />}
@@ -104,7 +107,10 @@ export default function ExamDetailsPage({ params }: { params: Promise<{ id: stri
                     </p>
                   </label>
                   
-                  <label className={`cursor-pointer p-4 rounded-lg border ${mode === "banco" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}>
+                  <label 
+                    onClick={() => setMode("banco")}
+                    className={`cursor-pointer p-4 rounded-lg border ${mode === "banco" ? "bg-[#00E5FF]/10 border-[#00E5FF]" : "bg-[#1A1A1A] border-[#2A2A2A] hover:bg-[#222]"} flex flex-col gap-2 transition-colors`}
+                  >
                     <div className="flex items-center gap-3">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${mode === "banco" ? "border-[#00E5FF]" : "border-gray-500"}`}>
                         {mode === "banco" && <div className="w-2.5 h-2.5 bg-[#00E5FF] rounded-full" />}
