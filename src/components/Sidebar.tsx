@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History, LogOut, Activity } from "lucide-react";
+import { LayoutDashboard, Crosshair, FolderKanban, Shield, Flame, Skull, Target, Dumbbell, History, LogOut, Activity, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -60,6 +60,10 @@ export function Sidebar({ user }: { user?: any }) {
           <Link href="/dungeons" className={getLinkClasses("/dungeons")} title="Dungeons">
             <Crosshair className={pathname === "/dungeons" ? "w-5 h-5 text-white" : "w-5 h-5 text-[#B026FF] group-hover:text-[#C555FF]"} />
             <span className={`font-body font-medium hidden md:block ${pathname === "/dungeons" ? "text-white" : "text-[#B026FF] group-hover:text-[#C555FF]"}`}>DUNGEONS</span>
+          </Link>
+          <Link href="/simulados" className={getLinkClasses("/simulados")} title="Simulados">
+            <ClipboardList className={pathname.startsWith("/simulados") ? "w-5 h-5 text-white" : "w-5 h-5 text-[#4CAF50] group-hover:text-[#81C784]"} />
+            <span className={`font-body font-medium hidden md:block ${pathname.startsWith("/simulados") ? "text-white" : "text-[#4CAF50] group-hover:text-[#81C784]"}`}>SIMULADOS</span>
           </Link>
           <Link href="/arquivo" className={getLinkClasses("/arquivo")} title="Arquivo">
             <FolderKanban className={getIconClasses("/arquivo")} />
