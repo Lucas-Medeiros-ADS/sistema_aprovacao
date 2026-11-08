@@ -26,6 +26,7 @@ model User {
   espirito      Int                 @default(0)
   streakDays    Int                 @default(0)
   spiritualType String              @default("Católico")
+  concurso      String?             @default("PMPE_SOLDADO")
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   examAttempts  ExamAttempt[]
@@ -48,6 +49,7 @@ model LeiSecaDay {
 model Subject {
   id          String       @id @default(uuid())
   name        String
+  concurso    String       @default("PMPE_SOLDADO")
   colorHex    String       @default("#00E5FF")
   importance  Int          @default(1)
   missionLogs MissionLog[]

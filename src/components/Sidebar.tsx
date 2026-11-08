@@ -31,7 +31,7 @@ export function Sidebar({ user }: { user?: any }) {
 
   return (
     <aside className="w-[70px] md:w-64 bg-[#111] border-r border-[#2A2A2A] flex flex-col justify-between h-screen sticky top-0 transition-all">
-      <div>
+      <div className="overflow-y-auto custom-scrollbar flex-1">
         <div className="p-4 md:p-6 border-b border-[#2A2A2A] flex justify-center md:justify-start items-center">
           <Shield className="w-8 h-8 text-[#2D5FAA] md:mr-3" />
           <div className="hidden md:block">
@@ -44,7 +44,7 @@ export function Sidebar({ user }: { user?: any }) {
           </div>
         </div>
 
-        <nav className="p-3 md:p-4 space-y-2 mt-2">
+        <nav className="p-3 md:p-4 space-y-1.5 mt-2">
           <Link href="/" className={getLinkClasses("/")} title="Status">
             <LayoutDashboard className={getIconClasses("/")} />
             <span className="font-body font-medium hidden md:block">STATUS</span>
@@ -61,6 +61,30 @@ export function Sidebar({ user }: { user?: any }) {
             <Crosshair className={pathname === "/dungeons" ? "w-5 h-5 text-white" : "w-5 h-5 text-[#B026FF] group-hover:text-[#C555FF]"} />
             <span className={`font-body font-medium hidden md:block ${pathname === "/dungeons" ? "text-white" : "text-[#B026FF] group-hover:text-[#C555FF]"}`}>DUNGEONS</span>
           </Link>
+
+          {/* SESSÃO DE EDITAIS / PORTAIS DE CONCURSO */}
+          <div className="pt-3 pb-1 border-t border-[#222] my-2">
+            <p className="px-3 pb-1 text-[10px] font-title tracking-[2px] text-gray-500 uppercase hidden md:block">
+              PORTAIS DE INCURSÃO
+            </p>
+            <Link href="/pmpe-soldado" className={getLinkClasses("/pmpe-soldado")} title="PMPE Soldado">
+              <span className="text-sm">🪖</span>
+              <span className="font-body font-semibold text-xs hidden md:block">PMPE SOLDADO</span>
+            </Link>
+            <Link href="/pmpe-oficial" className={getLinkClasses("/pmpe-oficial")} title="PMPE Oficial">
+              <span className="text-sm">⭐</span>
+              <span className="font-body font-semibold text-xs hidden md:block">PMPE OFICIAL</span>
+            </Link>
+            <Link href="/pcpe" className={getLinkClasses("/pcpe")} title="PCPE Agente">
+              <span className="text-sm">🔎</span>
+              <span className="font-body font-semibold text-xs hidden md:block">PCPE AGENTE</span>
+            </Link>
+            <Link href="/pppe" className={getLinkClasses("/pppe")} title="PPPE Polícia Penal">
+              <span className="text-sm">🔒</span>
+              <span className="font-body font-semibold text-xs hidden md:block">PPPE PENAL</span>
+            </Link>
+          </div>
+
           <Link href="/simulados" className={getLinkClasses("/simulados")} title="Simulados">
             <ClipboardList className={pathname.startsWith("/simulados") ? "w-5 h-5 text-white" : "w-5 h-5 text-[#4CAF50] group-hover:text-[#81C784]"} />
             <span className={`font-body font-medium hidden md:block ${pathname.startsWith("/simulados") ? "text-white" : "text-[#4CAF50] group-hover:text-[#81C784]"}`}>SIMULADOS</span>

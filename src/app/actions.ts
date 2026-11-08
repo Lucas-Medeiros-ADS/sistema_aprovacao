@@ -40,10 +40,13 @@ export async function getUserProfile() {
   return dbUser;
 }
 
-export async function getSubjects() {
+export async function getSubjects(concurso?: string) {
   const user = await getUserProfile();
   
+  const whereClause = concurso ? { concurso } : {};
+
   const subjects = await prisma.subject.findMany({
+    where: whereClause,
     include: {
       topics: {
         orderBy: { order: "asc" }
@@ -469,7 +472,7 @@ export async function toggleTopicTheory(topicId: string, isDone: boolean) {
       isTheoryDone: isDone
     }
   });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
@@ -491,6 +494,26 @@ export async function setTopicRevisions(topicId: string, revisionsCount: number)
       revisionsCompleted: revisionsCount
     }
   });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   return { success: true };
+}
+
+export async function getStudentsByConcurso(concurso: string) {
+  const students = await prisma.user.findMany({
+    where: {
+      concurso,
+    },
+    select: {
+      id: true,
+      name: true,
+      level: true,
+      xp: true,
+      streakDays: true,
+      classRole: true,
+    },
+    orderBy: { xp: "desc" },
+    take: 20,
+  });
+
+  return students;
 }

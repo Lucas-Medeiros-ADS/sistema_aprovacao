@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { login, registerUser, resetPasswordForEmail } from "@/app/actions";
-import { Shield, Key, User, ArrowRight, Mail, Activity, ShieldAlert, Crosshair, Map, Lock } from "lucide-react";
+import { Shield, Key, User, ArrowRight, Mail, Activity, ShieldAlert, Crosshair, Map, Lock, Search as SearchIcon } from "lucide-react";
 
 const CLASSES = [
   {
@@ -48,11 +48,6 @@ const CLASSES = [
     desc: "Instituição de caráter civil voltada para a proteção do patrimônio público (bancos, escolas, praças) e na colaboração com a segurança pública local."
   }
 ];
-
-// Helper to avoid missing lucide import
-function SearchIcon(props: any) {
-  return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
-}
 
 export default function LoginPage() {
   const [entryMode, setEntryMode] = useState<'CHOOSE' | 'LOGIN' | 'REGISTER'>('CHOOSE');
